@@ -1,28 +1,19 @@
 import React from 'react';
 import { equip_slots, rarities } from './App';
-import { ReactComponent as Helmet } from './svg/008-helmet-1.svg';
-import { ReactComponent as Platemail } from './svg/002-armor.svg';
-import { ReactComponent as Bracers } from './svg/006-armor-1.svg';
-import { ReactComponent as Sword_Magic } from './svg/003-sword.svg';
-import { ReactComponent as Axe } from './svg/005-axe.svg';
-import { ReactComponent as Null_SVG } from './svg/null.svg';
+import { ReactComponent as Helmet } from './svg/armor-helmet-norse.svg';
+import { ReactComponent as Platemail } from './svg/armor-torso-platemail.svg';
+import { ReactComponent as Bracers } from './svg/armor-hands-bracers.svg';
+import { ReactComponent as Sword_Dripping } from './svg/weapon-sword-dripping.svg';
+import { ReactComponent as Axe } from './svg/weapon-axe.svg';
+import { ReactComponent as Null_SVG } from './svg/utility-null.svg';
 // Icons provided by Flatimg
 
 export class Item {
-  // export const rarities = [
-  //   "common",
-  //   "uncommon",
-  //   "rare",
-  //   "epic",
-  //   "legendary",
-  //   "mythical",
-  //   "arcane"
-  // ]
   getImage(){
     // All rarity css classes are structured as "item-<rarity>" e.g. ".item-common"
     var item_classes = "item item-"+this.rarity;
     var svg = <Null_SVG className="item"/>;
-    switch(this.slot){
+    switch(this.equip_slot){
       case equip_slots.ARTIFACT_ONE:
       case equip_slots.ARTIFACT_TWO:
         break;
@@ -31,16 +22,16 @@ export class Item {
         break;
       case equip_slots.MAIN_HAND_ONE:
       case equip_slots.MAIN_HAND_TWO:
-        return <Axe className={item_classes}/>;
+        svg = <Axe className={item_classes}/>; break;
       case equip_slots.OFF_HAND_ONE:
       case equip_slots.OFF_HAND_TWO:
         break;
       case equip_slots.HEAD:
-        return <Helmet className={item_classes}/>;
+        svg = <Helmet className={item_classes}/>; break;
       case equip_slots.TORSO:
-        return <Platemail className={item_classes}/>;
+        svg = <Platemail className={item_classes}/>; break;
       case equip_slots.GLOVES:
-        return <Bracers className={item_classes}/>;
+        svg = <Bracers className={item_classes}/>; break;
       case equip_slots.BELT:
         break;
       case equip_slots.NECK:
@@ -52,13 +43,27 @@ export class Item {
       default:
         break;
     }
-    return <div>NULLIMG</div>
+    return svg;
   }
   // Slot: one of the equip_slots enum values
   constructor(name, slot, rarity, effects){
     this.name = name;
-    this.slot = slot;
+    this.equip_slot = slot;
     this.rarity = rarity;
     this.effects = effects;
+  }
+}
+
+export class Ingredient {
+  constructor(name, rarity, image){
+    this.name = name;
+    this.rarity = rarity;
+  }
+}
+
+
+export const ingredients = {
+  basic_meat: {
+    name: "Stringy meat",
   }
 }

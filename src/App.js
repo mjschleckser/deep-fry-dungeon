@@ -59,9 +59,9 @@ var playerObj = {
 
   // Skill cap is 60 for now
   skills: {
-    anatomy:    {display_name: "Anatomy", level: 1, xp: 50, xp_next: 400},
-    combat:     {display_name: "Combat", level: 1, xp: 250, xp_next: 400},
-    magic:      {display_name: "Magic", level: 3, xp: 100, xp_next: 1200},
+    anatomy:    {name: "Anatomy", level: 1, xp: 50, xp_next: 400},
+    combat:     {name: "Combat", level: 1, xp: 250, xp_next: 400},
+    magic:      {name: "Magic", level: 3, xp: 100, xp_next: 1200},
   },
   inventory: [],
   inventory_slots: 20,
@@ -175,7 +175,7 @@ class Game extends React.Component {
       // After animation plays, remove enemy and change stage
       setTimeout(()=>{
         // TODO: Randomly generate a message, instead of always using this one
-        this.dungeonState("You vanquish the "+e.display_name+"!");
+        this.dungeonState("You vanquish the "+e.name+"!");
         this.setState({enemy: null});
       }, 350);
     } else { // continue combat
@@ -194,17 +194,12 @@ class Game extends React.Component {
     var newSlime = new Monster(monsters.slime);
     var newHat =  new Item("Hat of Cool", equip_slots.HEAD, rarities[6], []);
     var newWeapon =  new Item("Longsword", equip_slots.MAIN_HAND_ONE, rarities[5], []);
-    var newWeapon2 =  new Item("Flame Sword", equip_slots.MAIN_HAND_ONE, rarities[4], []);
-    var newWeapon3 =  new Item("Longsword", equip_slots.MAIN_HAND_ONE, rarities[3], []);
-    var newWeapon4 =  new Item("Longsword", equip_slots.MAIN_HAND_ONE, rarities[2], []);
-    var newWeapon5 =  new Item("Longsword", equip_slots.MAIN_HAND_ONE, rarities[1], []);
-    var newWeapon6 =  new Item("Longsword", equip_slots.MAIN_HAND_ONE, rarities[0], []);
     console.log(newSlime);
     console.log(newHat);
     console.log(Object.keys(equip_slots));
 
     var np = this.state.player;
-    np.inventory.push(newHat, newWeapon, newWeapon2, newWeapon3, newWeapon4, newWeapon5, newWeapon6);
+    np.inventory.push(newHat, newWeapon);
     console.log(np.inventory);
     this.setState({player: np});
 
@@ -304,28 +299,28 @@ class InventoryDisplay extends React.Component {
   // TODO: properly implement this function
   // Fetches the item equipped in the given slot
   get_equipped(equipSlot){
-    //this.props.inventory;
     for(var i = 0; i < this.props.inventory.length; i++){
       var item = this.props.inventory[i];
-      if(item.equipSlot === equipSlot){
-        return item;
+      if(item.equip_slot === equipSlot){
+        return item.getImage();
       }
     }
-    return null;
+    return "";
   }
   render() {
     var createTable = ()=>{
       var equipSlotsArray = Object.keys(equip_slots);
+      console.log(equipSlotsArray);
       let table=[];
       for(var i=0; i < equipSlotsArray.length; i+=3){
-        var i1 = this.get_equipped(equipSlotsArray[i])
-        var i2 = this.get_equipped(equipSlotsArray[i+1])
-        var i3 = this.get_equipped(equipSlotsArray[i+2])
+        var i1 = this.get_equipped(equip_slots[equipSlotsArray[i]])
+        var i2 = this.get_equipped(equip_slots[equipSlotsArray[i+1]])
+        var i3 = this.get_equipped(equip_slots[equipSlotsArray[i+2]])
         table.push(
-          <tr>
-            <td className={i1!=null ? i1.rarity : ""}>{equipSlotsArray[i]}</td>
-            <td className={i2!=null ? i2.rarity : ""}>{equipSlotsArray[i+1]}</td>
-            <td className={i3!=null ? i3.rarity : ""}>{equipSlotsArray[i+2]}</td>
+          <tr key={i}>
+            <td>{i1}</td>
+            <td>{i2}</td>
+            <td>{i3}</td>
           </tr>
         );
       } // End for loop
@@ -334,7 +329,7 @@ class InventoryDisplay extends React.Component {
 
     return (
       <div className="menu-inventory-display">
-        <h1 className="title"> Inventory </h1>
+        <h1 className="title"> Equipment </h1>
         <br />
         <table className="inventory-display-table"><tbody>
           {createTable()}

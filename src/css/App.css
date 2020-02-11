@@ -5,18 +5,21 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 5vh;
   display: flex;
   flex-direction: column;
+  height: 5vh;
+  min-height: 35px;
   font-size: calc(10px + 2vmin);
   color: white;
 }
 .App-footer{
   text-align: right;
   background-color: #282c34;
-  min-height: 3vh;
+  height: 3vh;
+  min-height: 22px;
   font-size: calc(10px + 1vmin); /* TODO: Redo this calculation */
   color: white;
+
 }
 .App-link{
   color: white;
@@ -24,6 +27,7 @@
 
 .game-container {
   height: 92vh;
+  max-height: calc(100vh - 57px);
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -86,11 +90,24 @@
 .inventory-display-table > tbody > tr {
   border: 1px solid black;
 }
+/* Reference: https://stackoverflow.com/questions/22835430/make-table-cells-square */
 .inventory-display-table > tbody > tr > td  {
   /* font-size: 200%; */
-  background-color: #888888;
-  width: calc(25px + 4vw);
-  height: calc(25px + 4vw);
+  border: 1px solid black;
+  width: 33.33%;
+  position: relative;
+}
+.inventory-display-table > tbody > tr > td:after  {
+  content: '';
+  display: block;
+  margin-top: 100%;
+}
+.inventory-display-table > tbody > tr > td > svg  {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 .rarity-common { border: 3px solid white; }
 .rarity-uncommon { border: 3px solid #09b916; }

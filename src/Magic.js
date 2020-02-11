@@ -1,7 +1,7 @@
 // Definition file for all spells
 export const spells = {
   fireball: {
-    display_name: "Fireball",
+    name: "Fireball",
     description: "Attacks the enemy with a blast of fire for 30 damage.",
     mana_cost: 30,
     spellfunction: function(){
@@ -9,7 +9,7 @@ export const spells = {
     }
   },
   magicmissile: {
-    display_name: "Magic Missile",
+    name: "Magic Missile",
     description: "An unerring bolt of energy pummels your enemy for 10-15 damage.",
     mana_cost: 4,
     spellfunction: function(){
@@ -17,11 +17,11 @@ export const spells = {
     }
   },
   shield: {
-    display_name: "Shield",
+    name: "Shield",
     description: "A shimmering shield grants you 10 Damage Threshold, but slightly reduces maximum mana.",
     mana_cost: 10,
     spellfunction: function(){
-      
+
     }
   }
 }

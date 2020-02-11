@@ -1,5 +1,6 @@
 import React from 'react';
 import ProgressBar from './Utilities';
+import { ReactComponent as Close_Icon } from './svg/utility-close.svg';
 import './css/GameView.css';
 
 // Helper function: capitalizes first letter of each word in a string
@@ -29,24 +30,24 @@ export default class GameView extends React.Component {
         currentGameView = <BattleScreen enemy={this.props.enemy} loot={this.props.loot}/>
         actions = [
           {text: "Attack", action: this.props.functions.attack},
-          {text: "Run Away", action: () => {this.props.functions.dungeonState("You flee from the "+this.props.enemy.display_name+".")}},
+          {text: "Run Away", action: () => {this.props.functions.dungeonState("You flee from the "+this.props.enemy.name+".")}},
         ]
         break;
       case 2:
-        currentGameView = <InventoryScreen player={this.props.player} />
-        actions = [{text: "Return to Dungeon", action: this.props.functions.returnToDungeon }]
+        currentGameView = <InventoryScreen player={this.props.player} functions={this.props.functions} />
+        actions = []
         break;
       case 3:
-        currentGameView = <SpellbookScreen player={this.props.player} />
-        actions = [{text: "Return to Dungeon", action: this.props.functions.returnToDungeon }]
+        currentGameView = <SpellbookScreen player={this.props.player} functions={this.props.functions} />
+        actions = []
         break;
       case 4:
-        currentGameView = <CookbookScreen player={this.props.player} />
-        actions = [{text: "Return to Dungeon", action: this.props.functions.returnToDungeon }]
+        currentGameView = <CookbookScreen player={this.props.player} functions={this.props.functions} />
+        actions = []
         break;
       case 5:
-        currentGameView = <CharacterScreen player={this.props.player} />
-        actions = [{text: "Return to Dungeon", action: this.props.functions.returnToDungeon }]
+        currentGameView = <CharacterScreen player={this.props.player} functions={this.props.functions} />
+        actions = []
         break;
       default:
         currentGameView = (
@@ -130,10 +131,11 @@ class BattleScreen extends React.Component {
   render(){
     return (
       <div className="view-battle">
-        <div className="view-battle-text">A {this.props.enemy.display_name} jumps out from the shadows!</div>
+        <div className="view-battle-text">A {this.props.enemy.name} jumps out from the shadows!</div>
         <br />
         <div className="view-battle-health">
-          <h2>{capitalizeEachWord(this.props.enemy.display_name)}</h2>
+          <h2>{capitalizeEachWord(this.props.enemy.name)}</h2>
+          {this.props.enemy.getImage()}
           <ProgressBar progress={this.props.enemy.health} progressMax={this.props.enemy.health_max} color="red" bgColor="white" />
         </div>
       </div>
@@ -147,7 +149,7 @@ class CharacterScreen extends React.Component {
       var skillKeys = Object.keys(this.props.player.skills);
       for(let i=0; i < skillKeys.length; i++){
         var skill = this.props.player.skills[skillKeys[i]];
-        var skill_name = skill.display_name;
+        var skill_name = skill.name;
         var level = skill.level;
         var percent = Math.floor((skill.xp / skill.xp_next)*100);
         var innerBarStyle = { width: (percent)+"%", }
@@ -164,12 +166,13 @@ class CharacterScreen extends React.Component {
     // TODO: Populate stats page with real data for monsters slain
     return (
       <div className="character">
+        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><Close_Icon/></button>
         <h2>Player Skills</h2>
         <div className="character-skills">
           {createSkills()}
         </div>
         <h2>Monsters Slain</h2>
-        <div classname="character-stats">
+        <div classname="character-stats"> PLACEHOLDER STATS
           <div>Slimes: 16</div>
           <div>Kobolds: 0</div>
           <div>Behirs: 1</div>
@@ -193,6 +196,7 @@ class InventoryScreen extends React.Component {
 
     return (
       <div className="inventory">
+        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><Close_Icon/></button>
         <h2>Items in Backpack ({this.props.player.inventory_slots} slots)</h2>
         <div className="inventory-container">
           {createInventory()}
@@ -209,7 +213,7 @@ class SpellbookScreen extends React.Component {
       for(let i=0; i < sb.length; i++){
         table.push(
           <tr>
-            <td className="spelltitle">{sb[i].display_name}</td>
+            <td className="spelltitle">{sb[i].name}</td>
             <td className="spelltext">{sb[i].description}</td>
           </tr>);
       } // End for loop
@@ -217,6 +221,7 @@ class SpellbookScreen extends React.Component {
     } // End function
     return (
       <div className="spellbook">
+        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><Close_Icon/></button>
         <h2>Spellbook</h2>
         <table className="spellbook-container">
           {createSpellbook()}
@@ -237,7 +242,7 @@ class CookbookScreen extends React.Component {
         }
         table.push(
           <tr>
-            <td>{cb[i].display_name}</td>
+            <td>{cb[i].name}</td>
             <br/>
             {ingredients}
           </tr>
@@ -247,6 +252,7 @@ class CookbookScreen extends React.Component {
     } // End function
     return (
       <div className="cookbook">
+        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><Close_Icon/></button>
         <h2>Cookbook</h2>
         <table className="cookbook-container">
           {createCookbook()}
