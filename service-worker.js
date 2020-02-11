@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/deep-fry-dungeon/precache-manifest.13044f98e9728fa612a4c66e34e4f113.js"
+  "/deep-fry-dungeon/precache-manifest.382d437b3946caa32cb86c3a6b94c42a.js"
 );
 
 self.addEventListener('message', (event) => {
