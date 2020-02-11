@@ -1,0 +1,77 @@
+/********** Tooltip container **********/
+.tooltip {
+  position: relative;
+}
+.tooltip .tooltiptext {
+  visibility: hidden;
+  background-color: #555;
+  color: #fff;
+  text-align: left;
+  font-size: 100%;
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.tooltip-above {
+  /* Position the tooltip above parent */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 25%;
+  margin-left: -50%;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.tooltip-left {
+  /* Position the tooltip to the left of parent */
+  position: absolute;
+  z-index: 1;
+  left: -292px;
+  bottom: 20px;
+  width: 275px;
+  height: auto;
+  padding: 6px 8px;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+/********** Hover menu **********/
+.hoveritem {
+  position: relative;
+}
+.hoveritem .hovermenu {
+  visibility: hidden;
+  background-color: #555;
+  color: #fff;
+  text-align: left;
+  font-size: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.hovermenu-above {
+  /* Position the tooltip above parent */
+  position: absolute;
+  bottom: 100%;
+  padding: 6px;
+}
+
+/* Show the tooltip text when you mouse over either container*/
+.hoveritem:hover .hovermenu {
+  visibility: visible;
+  opacity: 1;
+}
+
+.hovermenu:hover {
+  visibility: visible;
+  opacity: 1;
+}

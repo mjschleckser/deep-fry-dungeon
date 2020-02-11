@@ -1,0 +1,145 @@
+/***************** Styles for stages/views *****************/
+.menu-gameview {
+  flex: 1 1 auto;
+  width: 60vw;  /* Fixed width so view doesn't resize on state change*/
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #777777;
+}
+
+.menu-actionbar {
+  flex: 0 1 auto;
+  background-color: #515151;
+  text-align: center;
+}
+.menu-actionbar > button {
+  height: calc(10px + 4vh);
+  /* width: 100%; */
+}
+
+/********** Styles for Dungeon screen **********/
+.view-dungeon{
+  font-family: "Consolas", monospace;
+  height: 100%;
+}
+.view-dungeon-text{
+  margin: 20px;
+}
+
+/********** Styles for Battle screen **********/
+.view-battle {
+
+}
+.view-battle-text {
+  /* font-family: "Luminari", fantasy, serif; */
+  position: relative;
+  top: calc(20px);
+  font-family: "Consolas", monospace;
+}
+.view-battle-health {
+  margin: 50px;
+  border: 1px solid black;
+}
+
+/********** Styles for Items **********/
+.item {
+  height: calc(100% - 10px) !important;
+  width: calc(100% - 10px) !important;
+}
+.item-common { border: 5px solid Grey; }
+.item-uncommon { border: 5px solid LimeGreen; }
+.item-rare { border: 5px solid DodgerBlue; }
+.item-epic { border: 5px solid DarkOrchid; }
+.item-legendary { border: 5px solid gold; }
+.item-mythical { border: 5px solid red; }
+.item-arcane {
+  border: 5px solid transparent;
+  border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+  border-image-slice: 1;
+}
+
+/********** Styles for Inventory screen **********/
+.inventory {
+  margin: 0px;
+}
+.inventory-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  height: 100%;
+}
+.inventory-container > div {
+  width: 7vw; min-width: 80px;
+  height: 7vw; min-height: 80px;
+  line-height: 7vw;
+  background-color: #f1f1f1;
+  margin: 7px;
+  text-align: center;
+}
+
+/********** Styles for Spellbook screen **********/
+.spellbook {
+
+}
+.spellbook-container {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+  margin: 20px;
+}
+.spellbook-container > tr > td {
+  padding: 10px;
+  background-color: #ffbfbf;
+  border: 1px solid black;
+  text-align: left;
+}
+.spelltitle {
+  font-weight: bold;
+}
+.spelltext {
+  font-style: italic;
+}
+
+/********** Styles for Cookbook screen **********/
+.cookbook { }
+.cookbook-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cookbook-container > tr {
+  padding: 5px;
+  margin: 5px;
+  background-color: #ADD8E6;
+}
+.cookbook-container > tr > td {
+  font-family: "Consolas", monospace;
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px;
+}
+/********** Styles for Character screen **********/
+.character{ }
+.character-skills {
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+}
+.progressbar-outer {
+  border: 1px solid black;
+  position: relative;
+  height: 8vh;
+}
+.progressbar-inner {
+  background-color: #90ee90;
+  height: 100%;
+}
+.progressbar-text {
+  position: absolute;
+  top: calc(50% - .8em);
+  left: 15px;
+}
