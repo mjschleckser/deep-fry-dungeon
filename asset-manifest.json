@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/deep-fry-dungeon/static/css/main.12b8975e.chunk.css",
+    "main.js": "/deep-fry-dungeon/static/js/main.f7107400.chunk.js",
+    "main.js.map": "/deep-fry-dungeon/static/js/main.f7107400.chunk.js.map",
+    "runtime-main.js": "/deep-fry-dungeon/static/js/runtime-main.19141af5.js",
+    "runtime-main.js.map": "/deep-fry-dungeon/static/js/runtime-main.19141af5.js.map",
+    "static/js/2.de19d4e2.chunk.js": "/deep-fry-dungeon/static/js/2.de19d4e2.chunk.js",
+    "static/js/2.de19d4e2.chunk.js.map": "/deep-fry-dungeon/static/js/2.de19d4e2.chunk.js.map",
+    "index.html": "/deep-fry-dungeon/index.html",
+    "precache-manifest.13044f98e9728fa612a4c66e34e4f113.js": "/deep-fry-dungeon/precache-manifest.13044f98e9728fa612a4c66e34e4f113.js",
+    "service-worker.js": "/deep-fry-dungeon/service-worker.js",
+    "static/css/main.12b8975e.chunk.css.map": "/deep-fry-dungeon/static/css/main.12b8975e.chunk.css.map",
+    "static/js/2.de19d4e2.chunk.js.LICENSE.txt": "/deep-fry-dungeon/static/js/2.de19d4e2.chunk.js.LICENSE.txt",
+    "static/media/002-armor.64cac696.svg": "/deep-fry-dungeon/static/media/002-armor.64cac696.svg",
+    "static/media/003-sword.be79bb31.svg": "/deep-fry-dungeon/static/media/003-sword.be79bb31.svg",
+    "static/media/005-axe.b8b85171.svg": "/deep-fry-dungeon/static/media/005-axe.b8b85171.svg",
+    "static/media/006-armor-1.679b13cf.svg": "/deep-fry-dungeon/static/media/006-armor-1.679b13cf.svg",
+    "static/media/008-helmet-1.3b43c161.svg": "/deep-fry-dungeon/static/media/008-helmet-1.3b43c161.svg",
+    "static/media/null.2d089f13.svg": "/deep-fry-dungeon/static/media/null.2d089f13.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.19141af5.js",
+    "static/js/2.de19d4e2.chunk.js",
+    "static/css/main.12b8975e.chunk.css",
+    "static/js/main.f7107400.chunk.js"
+  ]
+}
