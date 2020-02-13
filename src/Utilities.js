@@ -66,3 +66,16 @@ export class Collapsible extends React.Component {
     )
   }
 }
+
+export class Tooltip extends React.Component {
+  render(){
+    return (
+        <div className="tooltip">
+          {this.props.content}
+          <div className="tooltiptext">
+            {this.props.tooltip}
+          </div>
+        </div>
+    );
+  }
+}

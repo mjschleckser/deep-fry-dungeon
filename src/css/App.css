@@ -80,42 +80,62 @@
 }
 
 
-
 /***************** Styles for equipped view *****************/
-.inventory-display-table {
+.equipment-display {}
+.equipment-display-table {
   /* margin-top: 1vh; */
   width: 100%;
   border: 1px solid black;
 }
-.inventory-display-table > tbody > tr {
+.equipment-display-table > tbody > tr {
   border: 1px solid black;
 }
 /* Reference: https://stackoverflow.com/questions/22835430/make-table-cells-square */
-.inventory-display-table > tbody > tr > td  {
+.equipment-display-table > tbody > tr > td  {
   /* font-size: 200%; */
   border: 1px solid black;
   width: 33.33%;
   position: relative;
 }
-.inventory-display-table > tbody > tr > td:after  {
+.equipment-display-table > tbody > tr > td:after  {
   content: '';
   display: block;
   margin-top: 100%;
 }
-.inventory-display-table > tbody > tr > td > svg  {
+.equipment-display-table > tbody > tr > td > *,
+.equipment-display-table > tbody > tr > td > * > *  {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
 }
-.rarity-common { border: 3px solid white; }
-.rarity-uncommon { border: 3px solid #09b916; }
-.rarity-rare { border: 3px solid #4180eb; }
-.rarity-epic { border: 3px solid #b00be9; }
-.rarity-legendary { border: 3px solid #e8b923; }
-.rarity-mythical {border: 3px solid #8a0303}
 
+
+/********** Styles for Items **********/
+.item {
+  height: calc(100% - 10px);
+  width:  calc(100% - 10px);
+}
+.item-small {
+  height: calc(70% - 10px);
+  width:  calc(70% - 10px);
+  position: relative;
+  left: 15% !important;
+  top: 15% !important;
+}
+.item-none { opacity: 25%; border: 5px solid transparent; }
+.item-common { border: 5px solid #F8F8FF; }
+.item-uncommon { border: 5px solid LimeGreen; }
+.item-rare { border: 5px solid DodgerBlue; }
+.item-epic { border: 5px solid DarkOrchid; }
+.item-legendary { border: 5px solid gold; }
+.item-mythical { border: 5px solid red; }
+.item-arcane {
+  border: 5px solid transparent;
+  border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+  border-image-slice: 1;
+}
 
 /********** Collapsible / stats panel **********/
 .panel {
@@ -142,6 +162,33 @@
   height: auto;
 }
 .title, .subtitle {
-  font-style: oblique;
+  /* font-style: oblique; */
   margin-bottom: 0px;
+}
+
+/***************** Stats panel - Mana Bar *****************/
+.mana-bar-outer {
+  position: relative;
+  background-color: white;
+  height: 24px;
+}
+.mana-bar-inner {
+  background-color: blue;
+  height: 100%;
+  float: left;
+  text-align: left;
+  transition: width 0.3s ease;
+}
+.mana-bar-reserved {
+  background-color: darkgrey;
+  height: 100%;
+  float: right;
+  text-align: right;
+  transition: width 0.3s ease;
+}
+.mana-bar-text {
+  color: black;
+  position: absolute;
+  left: 0px;
+  text-align: left;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
+// import ProgressBar, { Tooltip } from './Utilities';
 import ProgressBar from './Utilities';
-import { ReactComponent as Close_Icon } from './svg/utility-close.svg';
+import { ReactComponent as CloseIcon } from './svg/utility-close.svg';
 import './css/GameView.css';
 
 // Helper function: capitalizes first letter of each word in a string
@@ -24,6 +25,10 @@ export default class GameView extends React.Component {
         currentGameView = <DungeonScreen message={this.props.message} loot={this.props.ground_items} />
         actions = [
           {text: "Explore the Dungeon", action: this.props.functions.explore},
+          {text: "+mana", action: this.props.functions.addMana},
+          {text: "-mana", action: this.props.functions.removeMana},
+          {text: "+reserved", action: this.props.functions.addReservedMana},
+          {text: "-reserved", action: this.props.functions.removeReservedMana},
         ]
         break;
       case 1:
@@ -110,8 +115,8 @@ class DungeonScreen extends React.Component {
   render(){
     let renderLoot = ()=> {
       var lootTable=[];
-      if(this.props.loot != null){
-
+      if(this.props.loot != null && this.props.loot.length > 1){
+        // Loot exists, render it
       } else {
         // TODO: select a randomly generated empty set dressing when loot is empty
         lootTable.push(<div>The empty cavern floor stretches out before you.</div>);
@@ -129,6 +134,9 @@ class DungeonScreen extends React.Component {
 
 class BattleScreen extends React.Component {
   render(){
+    var statusEffects = ()=>{
+      // this.props.enemy.statusEffects;
+    }
     return (
       <div className="view-battle">
         <div className="view-battle-text">A {this.props.enemy.name} jumps out from the shadows!</div>
@@ -137,6 +145,7 @@ class BattleScreen extends React.Component {
           <h2>{capitalizeEachWord(this.props.enemy.name)}</h2>
           {this.props.enemy.getImage()}
           <ProgressBar progress={this.props.enemy.health} progressMax={this.props.enemy.health_max} color="red" bgColor="white" />
+          {statusEffects()}
         </div>
       </div>
     );
@@ -166,7 +175,7 @@ class CharacterScreen extends React.Component {
     // TODO: Populate stats page with real data for monsters slain
     return (
       <div className="character">
-        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><Close_Icon/></button>
+        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><CloseIcon/></button>
         <h2>Player Skills</h2>
         <div className="character-skills">
           {createSkills()}
@@ -196,7 +205,7 @@ class InventoryScreen extends React.Component {
 
     return (
       <div className="inventory">
-        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><Close_Icon/></button>
+        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><CloseIcon/></button>
         <h2>Items in Backpack ({this.props.player.inventory_slots} slots)</h2>
         <div className="inventory-container">
           {createInventory()}
@@ -221,7 +230,7 @@ class SpellbookScreen extends React.Component {
     } // End function
     return (
       <div className="spellbook">
-        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><Close_Icon/></button>
+        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><CloseIcon/></button>
         <h2>Spellbook</h2>
         <table className="spellbook-container">
           {createSpellbook()}
@@ -252,7 +261,7 @@ class CookbookScreen extends React.Component {
     } // End function
     return (
       <div className="cookbook">
-        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><Close_Icon/></button>
+        <button className="icon-button" onClick={this.props.functions.returnToDungeon}><CloseIcon/></button>
         <h2>Cookbook</h2>
         <table className="cookbook-container">
           {createCookbook()}

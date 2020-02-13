@@ -1,5 +1,8 @@
 import React from 'react';
-import { ReactComponent as Slime } from './svg/enemies/slime.svg';
+import './css/Monsters.css';
+
+// Image imports
+import {ReactComponent as Gremlin} from './svg/enemies/gremlin.svg';
 
 // Monster class
 // A monster class is a single instance of a monster, with its own HP/MP
@@ -8,11 +11,15 @@ export class Monster {
   getImage(){
     return this.image;
   }
+  getLoot(){
+
+  }
   constructor(monsterConst){
     this.name = monsterConst.name;
     this.health = monsterConst.health_max;
     this.health_max = monsterConst.health_max;
     this.image = monsterConst.image;
+    this.loot = this.getLoot(monsterConst.level);
   }
 }
 
@@ -33,24 +40,6 @@ export const monsters = {
   slime: {
     name: "dungeon slime",
     health_max: 20,
-    image: <Slime/>,
-  },
-  kobold: {
-    name: "kobold",
-    health_max: 15,
-  },
-  giant_spider: {
-    name: "giant spider",
-    health_max: 30,
-  },
-  giant_ant: {
-    name: "giant ant",
-    health_max: 25,
-  },
-
-  //// Tier 2 Monsters ////
-  animated_armor: {
-    name: "animated armor",
-    health_max: 25,
+    image: <Gremlin className="monster"/>,
   },
 }

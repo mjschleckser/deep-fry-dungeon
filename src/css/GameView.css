@@ -6,6 +6,7 @@
   flex-direction: column;
   justify-content: space-between;
   background: #777777;
+  overflow-y: auto;
 }
 
 .menu-actionbar {
@@ -55,25 +56,6 @@
   background-color: #999;
   margin: 50px;
   border: 1px solid black;
-}
-
-/********** Styles for Items **********/
-.item {
-  height: calc(100% - 10px) !important;
-  width: calc(100% - 10px) !important;
-  background-color: #888;
-  padding: 0px;
-}
-.item-common { border: 5px solid Grey; }
-.item-uncommon { border: 5px solid LimeGreen; }
-.item-rare { border: 5px solid DodgerBlue; }
-.item-epic { border: 5px solid DarkOrchid; }
-.item-legendary { border: 5px solid gold; }
-.item-mythical { border: 5px solid red; }
-.item-arcane {
-  border: 5px solid transparent;
-  border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
-  border-image-slice: 1;
 }
 
 /********** Styles for Inventory screen **********/

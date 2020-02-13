@@ -8,8 +8,13 @@ import { Item } from './Items';
 import { spells } from './Magic';
 //Import CSS
 import './css/App.css';
-export default App;
+// Import SVG images
+import {
+  EmptyBelt, EmptyTorso, EmptyHand, EmptyBoots, EmptyArtifact, EmptyRing,
+  EmptyHead, EmptyNeck, EmptyShoulder, EmptyCookware, EmptyLegs, EmptyGloves
+} from './Items.js';
 
+export default App;
 export const gamestates = {
   DUNGEON: 0,
   BATTLE: 1,
@@ -20,21 +25,26 @@ export const gamestates = {
 }
 
 export const equip_slots = {
-  MAIN_HAND_ONE: "main hand one",
+  // Row 1
+  ARTIFACT_ONE: "artifact one",
   HEAD: "head",
-  MAIN_HAND_TWO: "main hand two",
-  OFF_HAND_ONE: "off hand one",
-  TORSO: "torso",
-  OFF_HAND_TWO: "off hand two",
-  GLOVES: "gloves",
-  BELT: "belt",
+  ARTIFACT_TWO: "artifact two",
+  // Row 2
+  MAIN_HAND_ONE: "main hand one",
   NECK: "neck",
+  SHOULDERS: "shoulders", // This can include capes!
+  // Row 3
+  MAIN_HAND_TWO: "main hand two",
+  TORSO: "torso",
+  BELT: "belt",
+  // Row 4
   RING_ONE: "ring one",
   LEGS: "legs",
-  ARTIFACT_ONE: "artifact one",
+  GLOVES: "gloves",
+  // Row 5
   RING_TWO: "ring two",
   BOOTS: "boots",
-  ARTIFACT_TWO: "artifact two",
+  COOKWARE: "cookware",
 }
 
 export const rarities = [
@@ -54,8 +64,9 @@ var playerObj = {
 
   health: 85,
   health_max: 100,
-  mana: 66,
+  mana: 33,
   mana_max: 100,
+  mana_reserved: 50,  // Amount of mana reserved for passive spells
 
   // Skill cap is 60 for now
   skills: {
@@ -63,9 +74,13 @@ var playerObj = {
     combat:     {name: "Combat", level: 1, xp: 250, xp_next: 400},
     magic:      {name: "Magic", level: 3, xp: 100, xp_next: 1200},
   },
+  // Items can be either in equipment (worn) or in inventory, not both
+  // Equipped items do not count towards inventory limit
   inventory: [],
+  equipment: [],
   inventory_slots: 20,
   spellbook: [spells.fireball, spells.magicmissile, spells.shield],
+  active_spells: [spells.shield],
   cookbook: [recipes.slime_pudding, recipes.spider_stew],
 }
 
@@ -187,37 +202,44 @@ class Game extends React.Component {
     np.health -= 10;
     this.setState({ player: np })
   }
+  addMana(){
+    var np = this.state.player;
+    np.mana += 10;
+    this.setState({ player: np })
+  }
+  removeMana(){
+    var np = this.state.player;
+    np.mana -= 10;
+    this.setState({ player: np })
+  }
+  addReservedMana(){
+    var np = this.state.player;
+    np.mana_reserved += 10;
+    this.setState({ player: np })
+  }
+  removeReservedMana(){
+    var np = this.state.player;
+    np.mana_reserved -= 10;
+    this.setState({ player: np })
+  }
 
   //*************** REACT FUNCTIONS **************/
   // Executes once on component load. Use for testing new code stuff
   componentDidMount(){
-    var newSlime = new Monster(monsters.slime);
-    var newHat =  new Item("Hat of Cool", equip_slots.HEAD, rarities[6], []);
-    var newWeapon =  new Item("Longsword", equip_slots.MAIN_HAND_ONE, rarities[5], []);
-    console.log(newSlime);
-    console.log(newHat);
-    console.log(Object.keys(equip_slots));
+    // var newSlime = new Monster(monsters.slime);
+    var beginnerWeapon =  new Item("Iron Axe", equip_slots.MAIN_HAND_ONE, rarities[0], []);
+    var beginnerArmor =  new Item("Iron Chainmail", equip_slots.TORSO, rarities[0], []);
+    var beginnerLegs =  new Item("Iron Leggings", equip_slots.LEGS, rarities[0], []);
+    var beginnerRing =  new Item("Copper Band", equip_slots.RING_ONE, rarities[1], []);
 
     var np = this.state.player;
-    np.inventory.push(newHat, newWeapon);
-    console.log(np.inventory);
+    np.inventory.push(beginnerRing,);
+    // np.equipment.push(beginnerWeapon, beginnerLegs, beginnerRing);
     this.setState({player: np});
 
   }
   // Draws the game
   render() {
-    // Check on our monsters
-    // console.log(Object.keys(monsters))
-    // Object.keys(monsters).forEach( key => console.log(monsters[key].display_name));
-
-    // Check for player death
-    if(this.state.player.health <= 0){
-      this.logEvent("You have died.");
-      var np = this.state.player;
-      this.setState({player: np})
-      np.health = 100;
-    }
-
     // Bind and pass functions to the GameView
     var gameViewFunctions = {
       returnToDungeon: this.returnToDungeon.bind(this),
@@ -227,6 +249,10 @@ class Game extends React.Component {
       explore: this.explore.bind(this),
       takeDamage: this.takeDamage.bind(this),
       attack: this.attack.bind(this),
+      addMana: this.addMana.bind(this),
+      removeMana: this.removeMana.bind(this),
+      addReservedMana: this.addReservedMana.bind(this),
+      removeReservedMana: this.removeReservedMana.bind(this),
     }
     var statusFunctions = {
       inventoryScreen: this.menuScreen.bind(this, gamestates.INVENTORY),
@@ -255,8 +281,8 @@ class Game extends React.Component {
           />
         </div>
         <div className="game-pane-right">
-          <InventoryDisplay
-            inventory={this.state.player.inventory}
+          <EquipmentDisplay
+            equipment={this.state.player.equipment}
           />
         </div>
       </div>
@@ -279,43 +305,96 @@ class Status extends React.Component {
           <h2> Health </h2>
             <ProgressBar progress={this.props.player.health} progressMax={this.props.player.health_max} color="red" bgColor="white" />
           <h2> Mana </h2>
-            <ProgressBar progress={this.props.player.mana} progressMax={this.props.player.mana_max} color="blue" bgColor="white" />
+            <ManaBar player={this.props.player} />
           <br />
           <button className={this.props.statusCode === gamestates.CHARACTER ? "panel panel-active" : "panel"}
                   onClick={this.props.functions.characterScreen}>Character Sheet</button>
           <button className={this.props.statusCode === gamestates.INVENTORY ? "panel panel-active" : "panel"}
                   onClick={this.props.functions.inventoryScreen}>Inventory</button>
-          <button className={this.props.statusCode === gamestates.SPELLBOOK ? "panel panel-active" : "panel"}
-                  onClick={this.props.functions.spellbookScreen}>Spellbook</button>
           <button className={this.props.statusCode === gamestates.COOKBOOK ? "panel panel-active" : "panel"}
                   onClick={this.props.functions.cookbookScreen}>Cookbook</button>
+          <button className={this.props.statusCode === gamestates.SPELLBOOK ? "panel panel-active" : "panel"}
+                  onClick={this.props.functions.spellbookScreen}>Spellbook</button>
       </div>
     );
   }
 }
 
+// Renders the player's mana bar
+class ManaBar extends React.Component {
+  render(){
+    var innerBarStyle = {
+      width: (this.props.player.mana / this.props.player.mana_max)* 100+"%",
+    }
+    var reservedStyle = {
+      width: (this.props.player.mana_reserved / this.props.player.mana_max)* 100+"%",
+    }
+    // TODO: Code the color of the text to always contrast both other colors
 
-class InventoryDisplay extends React.Component {
+    return (
+      <div className="mana-bar-outer">
+        <div className="mana-bar-inner" style={innerBarStyle}></div>
+        <span className="mana-bar-reserved" style={reservedStyle}> {this.props.player.mana_reserved} &nbsp;</span>
+        <span className="mana-bar-text"> &nbsp; {this.props.player.mana} / {this.props.player.mana_max} </span>
+      </div>
+    )
+  }
+}
+
+class EquipmentDisplay extends React.Component {
   // TODO: properly implement this function
   // Fetches the item equipped in the given slot
-  get_equipped(equipSlot){
-    for(var i = 0; i < this.props.inventory.length; i++){
-      var item = this.props.inventory[i];
+  getEmpty(slot){
+    var svg = <div></div>
+    switch(slot){
+      case equip_slots.ARTIFACT_ONE:
+      case equip_slots.ARTIFACT_TWO:
+        svg = <EmptyArtifact className="item-small item-none"/>; break;
+      case equip_slots.RING_ONE:
+      case equip_slots.RING_TWO:
+        svg = <EmptyRing className="item-small item-none"/>; break;
+      case equip_slots.MAIN_HAND_ONE:
+      case equip_slots.MAIN_HAND_TWO:
+        svg = <EmptyHand className="item-small item-none"/>; break;
+      case equip_slots.HEAD:
+        svg = <EmptyHead className="item item-none"/>; break;
+      case equip_slots.NECK:
+        svg = <EmptyNeck className="item item-none"/>; break;
+      case equip_slots.SHOULDERS:
+        svg = <EmptyShoulder className="item item-none"/>; break;
+      case equip_slots.TORSO:
+        svg = <EmptyTorso className="item item-none"/>; break;
+      case equip_slots.BELT:
+        svg = <EmptyBelt className="item item-none"/>; break;
+      case equip_slots.LEGS:
+        svg = <EmptyLegs className="item item-none"/>; break;
+      case equip_slots.BOOTS:
+        svg = <EmptyBoots className="item-small item-none"/>; break;
+      case equip_slots.GLOVES:
+        svg = <EmptyGloves className="item item-none"/>; break;
+      case equip_slots.COOKWARE:
+        svg = <EmptyCookware className="item item-none"/>; break;
+
+      }
+    return svg;
+  }
+  getEquipped(equipSlot){
+    for(var i = 0; i < this.props.equipment.length; i++){
+      var item = this.props.equipment[i];
       if(item.equip_slot === equipSlot){
         return item.getImage();
       }
     }
-    return "";
+    return this.getEmpty(equipSlot);
   }
   render() {
     var createTable = ()=>{
       var equipSlotsArray = Object.keys(equip_slots);
-      console.log(equipSlotsArray);
       let table=[];
       for(var i=0; i < equipSlotsArray.length; i+=3){
-        var i1 = this.get_equipped(equip_slots[equipSlotsArray[i]])
-        var i2 = this.get_equipped(equip_slots[equipSlotsArray[i+1]])
-        var i3 = this.get_equipped(equip_slots[equipSlotsArray[i+2]])
+        var i1 = this.getEquipped(equip_slots[equipSlotsArray[i]])
+        var i2 = this.getEquipped(equip_slots[equipSlotsArray[i+1]])
+        var i3 = this.getEquipped(equip_slots[equipSlotsArray[i+2]])
         table.push(
           <tr key={i}>
             <td>{i1}</td>
@@ -328,10 +407,10 @@ class InventoryDisplay extends React.Component {
     } // End arrow function
 
     return (
-      <div className="menu-inventory-display">
+      <div className="equipment-display">
         <h1 className="title"> Equipment </h1>
         <br />
-        <table className="inventory-display-table"><tbody>
+        <table className="equipment-display-table"><tbody>
           {createTable()}
         </tbody></table>
       </div>
