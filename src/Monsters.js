@@ -1,8 +1,9 @@
 import React from 'react';
 import './css/Monsters.css';
-
 // Image imports
-import {ReactComponent as Gremlin} from './svg/enemies/gremlin.svg';
+import {
+  Gremlin,
+} from './SVG';
 
 // Monster class
 // A monster class is a single instance of a monster, with its own HP/MP

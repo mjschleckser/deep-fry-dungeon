@@ -1,91 +1,91 @@
 import React from 'react';
-import { equip_slots } from './App';
+import { equip_slots, rarities } from './App';
 import { Tooltip } from './Utilities';
-////////////// SVG Imports //////////////
-////// Icons provided by Flatimg
-// Head Armor
-import { ReactComponent as HelmetNorse } from './svg/armor-helmet-norse.svg';
-import { ReactComponent as HelmetRoman } from './svg/armor-helmet-roman.svg';
-// Torso Armor
-import { ReactComponent as Platemail } from './svg/armor-torso-platemail.svg';
-// Hand Armor
-import { ReactComponent as Bracers } from './svg/armor-hands-bracers.svg';
-// Leg Armor
-import { ReactComponent as Greaves } from './svg/armor-legs-leggings.svg';
-// Weapons
-import { ReactComponent as SwordDripping } from './svg/weapon-sword-dripping.svg';
-import { ReactComponent as Axe } from './svg/weapon-axe.svg';
-// Rings
-import { ReactComponent as RingMedium } from './svg/armor-ring-medium.svg';
 
-export { ReactComponent as EmptyBelt } from './svg/equipment-empty/belt.svg';
-export { ReactComponent as EmptyTorso } from './svg/equipment-empty/chest.svg';
-export { ReactComponent as EmptyLegs } from './svg/equipment-empty/leggings.svg';
-export { ReactComponent as EmptyHand } from './svg/equipment-empty/fist.svg';
-export { ReactComponent as EmptyGloves } from './svg/equipment-empty/gloves.svg';
-export { ReactComponent as EmptyBoots } from './svg/equipment-empty/foot.svg';
-export { ReactComponent as EmptyArtifact } from './svg/equipment-empty/gem.svg';
-export { ReactComponent as EmptyRing } from './svg/equipment-empty/ring.svg';
-export { ReactComponent as EmptyHead } from './svg/equipment-empty/helmet.svg';
-export { ReactComponent as EmptyNeck } from './svg/equipment-empty/necklace.svg';
-export { ReactComponent as EmptyShoulder } from './svg/equipment-empty/shoulder.svg';
-export { ReactComponent as EmptyCookware } from './svg/equipment-empty/cauldron.svg';
+// Artifacts, rings, weapons/shields
+// Head, torso, legs, boots
+// Shoulders, neck, belt, gloves
+// Cookware
+import {
+  Gemstone01, Gemstone02,
+  Ring01,
+  Axe01, Axe02,
+  Head01, Head02,
+  Torso01, Torso02,
+  Leg01, Leg02,
+  Boot01,
+  Cloak01,
+  Neck01,
+  Belt01,
+  Gloves01, Gloves02,
+  Pot01
+} from './SVG';
+
+// Images for random generation. Not used for unique images
+const item_weights = [5, 1, 1, 1, 1, 1, 1, 1, 1, .5, .5, .5]
+const item_types = {
+  WEAPON: [Axe01, Axe02,],
+  HEAD: [Head01, Head02,],
+  TORSO: [Torso01, Torso02,],
+  LEGS: [Leg01, Leg02,],
+  BOOTS: [Boot01,],
+  SHOULDERS: [Cloak01,],
+  NECK: [Neck01,],
+  BELT: [Belt01,],
+  GLOVES: [Gloves01, Gloves02,],
+  ARTIFACT: [Gemstone01, Gemstone02],
+  RING: [Ring01,],
+  COOKWARE: [Pot01,],
+}
+
+// Generates an item completely randomly
+// Equal proportions for all equipment
+// 4 proportions for Weapons
+// 1/2 proportions for rings, artifacts, cookware
+export function generateItem(dungeon_level){
+    // First, declare all the vars we need to fill.
+    var item_type, rarity, image, effects;
+
+    // Randomly determine item type from weights
+    // We decrement towards zero; our rand is less than the sum of weights,
+    // so we will always reach 0 before ending.
+    var item_sum = item_weights.reduce( (sum, curVal)=>sum+curVal );
+    var rand = Math.random()*item_sum;
+    for(var i = 0; i < item_weights.length; i++){
+      rand -= item_weights[i];
+      if(rand <= 0) {
+        item_type = Object.keys(item_types)[i]; break;
+      }
+    }
+
+    // Given our item type, select a random image
+    var rand_image = Math.floor(Math.random() * item_types[item_type].length);
+    image = item_types[item_type][rand_image];
+
+    // Select a random rarity
+    // TODO: Make a more weighted distribution, based on dungeon level
+    rarity = Math.floor(Math.random() * rarities.length);
+
+    // TODO: Implement effects/damage/etc.
+
+    var newItem = new Item("Iron Axe", item_type, image, rarities[rarity], []);
+    return newItem;
+}
 
 export class Item {
-  // Randomly generates an item of the selected rarity
-  generateItem(rarity){
-
-  }
-  // Gets the empty, placeholder item image for the given slot
-
-  // Renders the item for display
-  // TODO: Break this into Equipment display & Inventory display
-  // TODO: Add tooltips, inventory functions (equip/drop/sell)
-  getImage(){
-    // All rarity css classes are structured as "item-<rarity>" e.g. ".item-common"
-    var item_classes = "item item-"+this.rarity;
-    var svg, tooltip = [];
-    switch(this.equip_slot){
-      case equip_slots.ARTIFACT_ONE:
-      case equip_slots.ARTIFACT_TWO:
-        break;
-      case equip_slots.RING_ONE:
-      case equip_slots.RING_TWO:
-        svg = <RingMedium className={item_classes}/>; break;
-      case equip_slots.MAIN_HAND_ONE:
-      case equip_slots.MAIN_HAND_TWO:
-        svg = <Axe className={item_classes}/>; break;
-      case equip_slots.HEAD:
-        svg = <HelmetRoman className={item_classes}/>; break;
-      case equip_slots.TORSO:
-        svg = <Platemail className={item_classes}/>; break;
-      case equip_slots.GLOVES:
-        svg = <Bracers className={item_classes}/>; break;
-      case equip_slots.BELT:
-        break;
-      case equip_slots.NECK:
-        break;
-      case equip_slots.SHOULDERS:
-        break;
-      case equip_slots.COOKWARE:
-        break;
-      case equip_slots.LEGS:
-        svg = <Greaves className={item_classes}/>; break;
-      case equip_slots.BOOTS:
-        break;
-      default:
-        break;
-    }
-    tooltip = <span>Tooltip.</span>
-    // svg = <Tooltip content={svg} tooltip={tooltip}/>
-    return svg;
-  }
-  // Slot: one of the equip_slots enum values
-  constructor(name, slot, rarity, effects){
+  constructor(name, item_type, image, rarity, effects){  // rarity, item_type, name, effects
     this.name = name;
-    this.equip_slot = slot;
+    this.image = image;
+    this.item_type = item_type;
     this.rarity = rarity;
     this.effects = effects;
+
+  }
+  getImage(){
+    // TODO: Break this into Equipment display & Inventory display
+    // TODO: Add tooltips, inventory functions (equip/drop/sell)
+    var item_classes = "item item-"+this.rarity;
+    return React.createElement(this.image, {className: item_classes });
   }
 }
 

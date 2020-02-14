@@ -112,10 +112,18 @@
 }
 
 
+/********** Styles for Empty Item Slots **********/
+.empty-item {
+  height: calc(100% - 10px);
+  width:  calc(100% - 10px);
+  opacity: 25%; border: 5px solid transparent;
+}
+
 /********** Styles for Items **********/
 .item {
   height: calc(100% - 10px);
   width:  calc(100% - 10px);
+  cursor: pointer;
 }
 .item-small {
   height: calc(70% - 10px);
@@ -124,8 +132,7 @@
   left: 15% !important;
   top: 15% !important;
 }
-.item-none { opacity: 25%; border: 5px solid transparent; }
-.item-common { border: 5px solid #F8F8FF; }
+.item-common { border: 5px solid DarkGray ; }
 .item-uncommon { border: 5px solid LimeGreen; }
 .item-rare { border: 5px solid DodgerBlue; }
 .item-epic { border: 5px solid DarkOrchid; }

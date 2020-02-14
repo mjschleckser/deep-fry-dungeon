@@ -4,7 +4,7 @@ import GameView from './GameView';
 import ProgressBar from './Utilities';
 // Import classes & enums
 import { Monster, monsters, recipes } from './Monsters';
-import { Item } from './Items';
+import { Item, generateItem } from './Items';
 import { spells } from './Magic';
 //Import CSS
 import './css/App.css';
@@ -12,7 +12,7 @@ import './css/App.css';
 import {
   EmptyBelt, EmptyTorso, EmptyHand, EmptyBoots, EmptyArtifact, EmptyRing,
   EmptyHead, EmptyNeck, EmptyShoulder, EmptyCookware, EmptyLegs, EmptyGloves
-} from './Items.js';
+} from './SVG';
 
 export default App;
 export const gamestates = {
@@ -26,25 +26,25 @@ export const gamestates = {
 
 export const equip_slots = {
   // Row 1
-  ARTIFACT_ONE: "artifact one",
-  HEAD: "head",
-  ARTIFACT_TWO: "artifact two",
+  ARTIFACT_ONE: 0,
+  HEAD: 1,
+  ARTIFACT_TWO: 2,
   // Row 2
-  MAIN_HAND_ONE: "main hand one",
-  NECK: "neck",
-  SHOULDERS: "shoulders", // This can include capes!
+  MAIN_HAND_ONE: 3,
+  NECK: 4,
+  SHOULDERS: 5, // This can include capes!
   // Row 3
-  MAIN_HAND_TWO: "main hand two",
-  TORSO: "torso",
-  BELT: "belt",
+  MAIN_HAND_TWO: 6,
+  TORSO: 7,
+  BELT: 8,
   // Row 4
-  RING_ONE: "ring one",
-  LEGS: "legs",
-  GLOVES: "gloves",
+  RING_ONE: 9,
+  LEGS: 10,
+  GLOVES: 11,
   // Row 5
-  RING_TWO: "ring two",
-  BOOTS: "boots",
-  COOKWARE: "cookware",
+  RING_TWO: 12,
+  BOOTS: 13,
+  COOKWARE: 14,
 }
 
 export const rarities = [
@@ -67,6 +67,7 @@ var playerObj = {
   mana: 33,
   mana_max: 100,
   mana_reserved: 50,  // Amount of mana reserved for passive spells
+  // mana + mana_reserved < mana_max (always)
 
   // Skill cap is 60 for now
   skills: {
@@ -93,8 +94,6 @@ var playerObj = {
 // https://github.com/gitname/react-gh-pages
 
 /*************** GENERIC TODOS ***************/
-// TODO: Collapse the left & right panels at mobile resolutions, make them expandable via button
-// TODO: republish entire project to a new, public repo
 function App() {
   return (
     <div className="App">
@@ -116,7 +115,7 @@ class Game extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      statusCode: 0,  // Governs which window we're displaying
+      statusCode: gamestates.INVENTORY,  // Governs which window we're displaying
       player: playerObj,
       enemy: null,
       message: "Welcome to the dungeon.",
@@ -226,17 +225,26 @@ class Game extends React.Component {
   //*************** REACT FUNCTIONS **************/
   // Executes once on component load. Use for testing new code stuff
   componentDidMount(){
-    // var newSlime = new Monster(monsters.slime);
-    var beginnerWeapon =  new Item("Iron Axe", equip_slots.MAIN_HAND_ONE, rarities[0], []);
-    var beginnerArmor =  new Item("Iron Chainmail", equip_slots.TORSO, rarities[0], []);
-    var beginnerLegs =  new Item("Iron Leggings", equip_slots.LEGS, rarities[0], []);
-    var beginnerRing =  new Item("Copper Band", equip_slots.RING_ONE, rarities[1], []);
+    // Function to test randomness
+    // var results = {};
+    // for(var i = 0; i < 30; i++){
+    //   var result = generateItem();
+    //   if(results[result] === undefined){
+    //     results[result] = 1;
+    //   } else {
+    //     results[result] = results[result] + 1;
+    //   }
+    // }
+    // console.log(results);
 
+    // Add 10 random items to player inventory
     var np = this.state.player;
-    np.inventory.push(beginnerRing,);
-    // np.equipment.push(beginnerWeapon, beginnerLegs, beginnerRing);
+    for(var i = 0; i < 14; i++){
+      var newItem = generateItem();
+      np.inventory.push(newItem);
+    }
     this.setState({player: np});
-
+    console.log(this.state.player.inventory)
   }
   // Draws the game
   render() {
@@ -347,34 +355,30 @@ class EquipmentDisplay extends React.Component {
   getEmpty(slot){
     var svg = <div></div>
     switch(slot){
-      case equip_slots.ARTIFACT_ONE:
-      case equip_slots.ARTIFACT_TWO:
-        svg = <EmptyArtifact className="item-small item-none"/>; break;
-      case equip_slots.RING_ONE:
-      case equip_slots.RING_TWO:
-        svg = <EmptyRing className="item-small item-none"/>; break;
-      case equip_slots.MAIN_HAND_ONE:
-      case equip_slots.MAIN_HAND_TWO:
-        svg = <EmptyHand className="item-small item-none"/>; break;
+      case equip_slots.ARTIFACT_ONE: case equip_slots.ARTIFACT_TWO:
+        svg = <EmptyArtifact className="empty-item item-small"/>; break;
+      case equip_slots.RING_ONE: case equip_slots.RING_TWO:
+        svg = <EmptyRing className="empty-item item-small"/>; break;
+      case equip_slots.MAIN_HAND_ONE: case equip_slots.MAIN_HAND_TWO:
+        svg = <EmptyHand className="empty-item item-small"/>; break;
       case equip_slots.HEAD:
-        svg = <EmptyHead className="item item-none"/>; break;
+        svg = <EmptyHead className="empty-item"/>; break;
       case equip_slots.NECK:
-        svg = <EmptyNeck className="item item-none"/>; break;
+        svg = <EmptyNeck className="empty-item"/>; break;
       case equip_slots.SHOULDERS:
-        svg = <EmptyShoulder className="item item-none"/>; break;
+        svg = <EmptyShoulder className="empty-item"/>; break;
       case equip_slots.TORSO:
-        svg = <EmptyTorso className="item item-none"/>; break;
+        svg = <EmptyTorso className="empty-item"/>; break;
       case equip_slots.BELT:
-        svg = <EmptyBelt className="item item-none"/>; break;
+        svg = <EmptyBelt className="empty-item"/>; break;
       case equip_slots.LEGS:
-        svg = <EmptyLegs className="item item-none"/>; break;
+        svg = <EmptyLegs className="empty-item"/>; break;
       case equip_slots.BOOTS:
-        svg = <EmptyBoots className="item-small item-none"/>; break;
+        svg = <EmptyBoots className="empty-item item-small"/>; break;
       case equip_slots.GLOVES:
-        svg = <EmptyGloves className="item item-none"/>; break;
+        svg = <EmptyGloves className="empty-item"/>; break;
       case equip_slots.COOKWARE:
-        svg = <EmptyCookware className="item item-none"/>; break;
-
+        svg = <EmptyCookware className="empty-item"/>; break;
       }
     return svg;
   }
