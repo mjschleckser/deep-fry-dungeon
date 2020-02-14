@@ -66,7 +66,7 @@ var playerObj = {
   health_max: 100,
   mana: 33,
   mana_max: 100,
-  mana_reserved: 50,  // Amount of mana reserved for passive spells
+  mana_reserved: 20,  // Amount of mana reserved for passive spells
   // mana + mana_reserved < mana_max (always)
 
   // Skill cap is 60 for now
@@ -115,7 +115,7 @@ class Game extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      statusCode: gamestates.INVENTORY,  // Governs which window we're displaying
+      statusCode: gamestates.DUNGEON,  // Governs which window we're displaying
       player: playerObj,
       enemy: null,
       message: "Welcome to the dungeon.",
@@ -257,10 +257,6 @@ class Game extends React.Component {
       explore: this.explore.bind(this),
       takeDamage: this.takeDamage.bind(this),
       attack: this.attack.bind(this),
-      addMana: this.addMana.bind(this),
-      removeMana: this.removeMana.bind(this),
-      addReservedMana: this.addReservedMana.bind(this),
-      removeReservedMana: this.removeReservedMana.bind(this),
     }
     var statusFunctions = {
       inventoryScreen: this.menuScreen.bind(this, gamestates.INVENTORY),

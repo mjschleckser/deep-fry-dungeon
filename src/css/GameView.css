@@ -8,9 +8,10 @@
   background: #777777;
   overflow-y: auto;
 }
-
-.menu-actionbar {
-  flex: 0 1 auto;
+.menu-actionbar { /* Shared between Dungeon & Battle views */
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
   background-color: #515151;
   text-align: center;
 }
@@ -18,6 +19,7 @@
   height: calc(10px + 4vh);
   /* width: 100%; */
 }
+
 
 /* Styles for icon buttons e.g. "CLOSE" x */
 .icon-button {
@@ -34,8 +36,17 @@
   width: 100%;
 }
 
+.menu-test-please-remove-me-now {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  background-color: red;
+  text-align: center;
+}
+
 /********** Styles for Dungeon screen **********/
 .view-dungeon{
+  position: relative;
   font-family: "Consolas", monospace;
   height: 100%;
 }
@@ -45,7 +56,7 @@
 
 /********** Styles for Battle screen **********/
 .view-battle {
-
+  position: relative;
 }
 .view-battle-text {
   /* font-family: "Luminari", fantasy, serif; */

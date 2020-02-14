@@ -21,38 +21,45 @@ export default class GameView extends React.Component {
     var currentGameView;
     var actions;
     switch(this.props.statusCode){
-      case 0:
-        currentGameView = <DungeonScreen message={this.props.message} loot={this.props.ground_items} />
-        actions = [
-          {text: "Explore the Dungeon", action: this.props.functions.explore},
-          {text: "+mana", action: this.props.functions.addMana},
-          {text: "-mana", action: this.props.functions.removeMana},
-          {text: "+reserved", action: this.props.functions.addReservedMana},
-          {text: "-reserved", action: this.props.functions.removeReservedMana},
-        ]
+      case 0: // gamestates.DUNGEON
+        currentGameView = <DungeonScreen
+          player={this.props.player}
+          functions={this.props.functions}
+          message={this.props.message}
+          loot={this.props.ground_items}
+        />;
         break;
-      case 1:
-        currentGameView = <BattleScreen enemy={this.props.enemy} loot={this.props.loot}/>
-        actions = [
-          {text: "Attack", action: this.props.functions.attack},
-          {text: "Run Away", action: () => {this.props.functions.dungeonState("You flee from the "+this.props.enemy.name+".")}},
-        ]
+      case 1: // gamestates.BATTLE
+        currentGameView = <BattleScreen
+          player={this.props.player}
+          functions={this.props.functions}
+          enemy={this.props.enemy}
+          loot={this.props.loot}
+        />;
         break;
-      case 2:
-        currentGameView = <InventoryScreen player={this.props.player} functions={this.props.functions} />
-        actions = []
+      case 2: // gamestates.INVENTORY
+        currentGameView = <InventoryScreen
+          player={this.props.player}
+          functions={this.props.functions}
+        />
         break;
-      case 3:
-        currentGameView = <SpellbookScreen player={this.props.player} functions={this.props.functions} />
-        actions = []
+      case 3: // gamestates.SPELLBOOK
+        currentGameView = <SpellbookScreen
+        player={this.props.player}
+        functions={this.props.functions}
+        />
         break;
-      case 4:
-        currentGameView = <CookbookScreen player={this.props.player} functions={this.props.functions} />
-        actions = []
+      case 4: // gamestates.COOKBOOK
+        currentGameView = <CookbookScreen
+          player={this.props.player}
+          functions={this.props.functions}
+        />
         break;
-      case 5:
-        currentGameView = <CharacterScreen player={this.props.player} functions={this.props.functions} />
-        actions = []
+      case 5: // gamestates.CHARACTER
+        currentGameView = <CharacterScreen
+          player={this.props.player}
+          functions={this.props.functions}
+        />
         break;
       default:
         currentGameView = (
@@ -62,26 +69,18 @@ export default class GameView extends React.Component {
     return (
       <div className="menu-gameview">
         { currentGameView }
-        <ActionBar actions={ actions }/>
       </div>
     );
 
   }
 }
 
-//// Old ActionBar code
-// <button onClick={this.props.levelEvent}>Random Skill Level</button>
-// <button onClick={this.props.takeDamage}>Take 10hp damage</button>
-// <button className="hoveritem">
-//   Cast a spell...
-//   <div className="hovermenu hovermenu-above">
-//     <button onClick={this.props.levelEvent}>Random Skill Level</button>
-//     <button onClick={this.props.levelEvent}>Random Skill Level</button>
-//   </div>
-// </button>
 class ActionBar extends React.Component {
   render() {
-    var actions;
+
+    // TODO: comment this, uncomment next line
+    var actions = <button> Sample Text </button>
+    // var actions;
     if(this.props.actions != null){
       actions = Object.entries(this.props.actions).map(([key, obj]) => {
           return <button key={key} onClick={obj.action}> {obj.text} </button>
@@ -95,24 +94,11 @@ class ActionBar extends React.Component {
   }
 }
 
-// EventLog
-// This div logs all game events as text & creates a scrollable history of actions.
-// class EventLog extends React.Component {
-//   render() {
-//     const events = Object.entries(this.props.events).reverse().map(([key, value]) => {
-//         return <div key={key}> {value} </div>
-//     })
-//     return (
-//       <div className="menu-eventlog">
-//         {events}
-//       </div>
-//     );
-//   }
-// }
-
-
 class DungeonScreen extends React.Component {
   render(){
+    var actions = [
+      {text: "Explore the Dungeon", action: this.props.functions.explore},
+    ]
     let renderLoot = ()=> {
       var lootTable=[];
       if(this.props.loot != null && this.props.loot.length > 1){
@@ -127,6 +113,7 @@ class DungeonScreen extends React.Component {
       <div className="view-dungeon">
         <div className="view-dungeon-text">{this.props.message}</div>
         {renderLoot()}
+        <ActionBar/>
       </div>
     )
   }
@@ -134,6 +121,10 @@ class DungeonScreen extends React.Component {
 
 class BattleScreen extends React.Component {
   render(){
+    var actions = [
+      {text: "Attack", action: this.props.functions.attack},
+      {text: "Run Away", action: () => {this.props.functions.dungeonState("You flee from the "+this.props.enemy.name+".")}},
+    ]
     var statusEffects = ()=>{
       // this.props.enemy.statusEffects;
     }
@@ -147,6 +138,7 @@ class BattleScreen extends React.Component {
           <ProgressBar progress={this.props.enemy.health} progressMax={this.props.enemy.health_max} color="red" bgColor="white" />
           {statusEffects()}
         </div>
+        <ActionBar/>
       </div>
     );
   }
