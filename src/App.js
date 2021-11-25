@@ -200,30 +200,34 @@ class Game extends React.Component {
 
 
   /************ PLAYER STAT MODIFIERS ************/
-  playerHealthChange( amount, isDamage ){
+  modifyHealth( amount, isDamage ){
     var np = this.state.player;
     np.health = (isDamage ? np.health - amount : np.health + amount)
-    // If player is killed
+
     if(np.health <= 0){
       // TODO: State transition to death
     }
-    // If HP cap is exceeded
+
     if(np.health >= np.health_max){
       np.health = np.health_max;
     }
     this.setState({ player: np })
   }
 
-  spendMana( manaAmount ){
+  modifyMana( amount, isDamage ){
     var np = this.state.player;
-    np.mana -= manaAmount;
+    np.mana = (isDamage ? np.mana - amount : np.mana + amount)
+
+    if(np.mana <= 0){
+      // TODO: Spell fails, return "False"
+    }
+
+    if(np.mana >= (np.mana_max - np.mana_reserved)){
+      np.mana = np.mana_max - np.mana_reserved;
+    }
     this.setState({ player: np })
   }
-  gainMana( manaAmount ){
-    var np = this.state.player;
-    np.mana += manaAmount;
-    this.setState({ player: np })
-  }
+
   removeReservedMana(){
     var np = this.state.player;
     np.mana_reserved -= 10;
@@ -258,7 +262,8 @@ class Game extends React.Component {
     // Begin an interval for the game clock. Runs 4/second.
     setInterval(() => {
       console.log("Tock.")
-      this.playerHealthChange(.25, false);
+      this.modifyHealth(1, false);
+      this.modifyMana(2, false)
     }, 250);
   }
 
@@ -272,7 +277,7 @@ class Game extends React.Component {
       battleState: this.battleState.bind(this),
       forceGameState: this.forceGameState.bind(this),
       explore: this.explore.bind(this),
-      playerHealthChange: this.playerHealthChange.bind(this),
+      modifyHealth: this.modifyHealth.bind(this),
       attack: this.attack.bind(this),
     }
     var statusFunctions = {
