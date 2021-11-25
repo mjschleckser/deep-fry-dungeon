@@ -26,8 +26,7 @@
   height:35px;
   width: 35px;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 0;  right: 0;
   border: 2px solid black;
   cursor: pointer;
 }
@@ -44,13 +43,35 @@
   text-align: center;
 }
 
+/********** Styles for Intro screen **********/
+.view-intro{
+
+}
+
+
+
 /********** Styles for Dungeon screen **********/
 .view-dungeon{
   position: relative;
   font-family: "Consolas", monospace;
   height: 100%;
 }
+
+.view-dungeon::before {
+  content: "";
+  display:inline-block;
+  position: absolute;
+  top: 0px; left: 0px;
+  background-image: url('./img/corridor-960_720.jpg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  filter: grayscale(100%);
+  opacity: 0.2;
+  height: 100%; width: 100%;
+}
+
 .view-dungeon-text{
+  font-family: "Consolas", monospace !important;
   margin: 20px;
 }
 
@@ -69,6 +90,19 @@
   margin: 50px;
   border: 1px solid black;
 }
+
+
+/**********************************************/
+/********** Beginning of Menu styles **********/
+/**********************************************/
+
+/********** Styles for Overlay **********/
+.overlay {
+  position: absolute;
+  top: 0px;  right: 0px;
+  width: 4vw%; height: 4vh%;
+}
+
 
 /********** Styles for Inventory screen **********/
 .inventory { position: relative; }
