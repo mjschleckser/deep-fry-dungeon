@@ -18,12 +18,54 @@ function capitalizeEachWord(string){
 // This window renders the actual game view - monsters, rooms, etc
 export default class GameView extends React.Component {
   render() {
-    var currentGameView = (
-      <button className="text-indigo-500 bg-indigo-100">
-        Custom Button
-      </button>
-    );
-
+    var currentGameView;
+    var actions;
+    switch(this.props.statusCode){
+      case 0: // gamestates.DUNGEON
+        currentGameView = <DungeonScreen
+          player={this.props.player}
+          functions={this.props.functions}
+          message={this.props.message}
+          loot={this.props.ground_items}
+        />;
+        break;
+      case 1: // gamestates.BATTLE
+        currentGameView = <BattleScreen
+          player={this.props.player}
+          functions={this.props.functions}
+          enemy={this.props.enemy}
+          loot={this.props.loot}
+        />;
+        break;
+      case 2: // gamestates.INVENTORY
+        currentGameView = <InventoryScreen
+          player={this.props.player}
+          functions={this.props.functions}
+        />
+        break;
+      case 3: // gamestates.SPELLBOOK
+        currentGameView = <SpellbookScreen
+        player={this.props.player}
+        functions={this.props.functions}
+        />
+        break;
+      case 4: // gamestates.COOKBOOK
+        currentGameView = <CookbookScreen
+          player={this.props.player}
+          functions={this.props.functions}
+        />
+        break;
+      case 5: // gamestates.CHARACTER
+        currentGameView = <CharacterScreen
+          player={this.props.player}
+          functions={this.props.functions}
+        />
+        break;
+      default:
+        currentGameView = (
+          <div>OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!</div>
+        );
+    } // End of switch
     return (
       <div className="menu-gameview">
         { currentGameView }
@@ -101,9 +143,7 @@ class BattleScreen extends React.Component {
     );
   }
 }
-
-
-class CharacterMenu extends React.Component {
+class CharacterScreen extends React.Component {
   render(){
     var createSkills = ()=>{
       var table=[];
@@ -142,7 +182,7 @@ class CharacterMenu extends React.Component {
     );
   }
 }
-class InventoryMenu extends React.Component {
+class InventoryScreen extends React.Component {
   render(){
     var createInventory = ()=>{
       var table=[];

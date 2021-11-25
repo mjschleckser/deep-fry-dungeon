@@ -1,14 +1,13 @@
 .App {
-  text-align: center;
   overflow: hidden;
 }
 
 .App-header {
-  background-color: #282c34;
   display: flex;
   flex-direction: column;
-  height: 5vh;
-  min-height: 35px;
+  text-align: center;
+  background-color: #282c34;
+  height: 5vh; min-height: 35px;
   font-size: calc(10px + 2vmin);
   color: white;
 }
@@ -81,7 +80,9 @@
 
 
 /***************** Styles for equipped view *****************/
-.equipment-display {}
+.equipment-display {
+  text-align: center;
+}
 .equipment-display-table {
   /* margin-top: 1vh; */
   width: 100%;
@@ -121,8 +122,8 @@
 
 /********** Styles for Items **********/
 .item {
-  height: calc(100% - 10px);
-  width:  calc(100% - 10px);
+  height: 100%;
+  width:  100%;
   cursor: pointer;
 }
 .item-small {
