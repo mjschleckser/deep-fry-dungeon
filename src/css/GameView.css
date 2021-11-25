@@ -12,11 +12,13 @@
   position: absolute;
   bottom: 0px;
   width: 100%;
+  padding: 10px;
   background-color: #515151;
   text-align: center;
 }
 .menu-actionbar > button {
   height: calc(10px + 4vh);
+  margin: 0 5px 0 5px;
   /* width: 100%; */
 }
 

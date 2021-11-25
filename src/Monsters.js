@@ -39,8 +39,13 @@ export const recipes = {
 export const monsters = {
   //// Tier 1 Monsters ////
   slime: {
-    name: "dungeon slime",
+    name: "gremlin",
     health_max: 20,
+    image: <Gremlin className="monster"/>,
+  },
+  imp: {
+    name: "imp",
+    health_max: 15,
     image: <Gremlin className="monster"/>,
   },
 }
