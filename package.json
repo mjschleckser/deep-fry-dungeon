@@ -4,13 +4,14 @@
   "private": true,
   "homepage": "https://mjschleckser.github.io/deep-fry-dungeon",
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/jest-dom": "^5.15.1",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
+    "cirrus-ui": "^0.6.3",
     "gh-pages": "^2.2.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.1"
+    "react-scripts": "^4.0.3"
   },
   "scripts": {
     "predeploy": "npm run build",
