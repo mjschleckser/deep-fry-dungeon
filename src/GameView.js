@@ -19,7 +19,9 @@ function capitalizeEachWord(string){
 export default class GameView extends React.Component {
   render() {
     var currentGameView = (
-      <div style={{ color: 'red' }}>Hello, world.</div>
+      <button className="text-indigo-500 bg-indigo-100">
+        Custom Button
+      </button>
     );
 
     return (
