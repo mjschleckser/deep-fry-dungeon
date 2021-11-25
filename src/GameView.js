@@ -23,9 +23,9 @@ export default class GameView extends React.Component {
     switch(this.props.statusCode){
       case 0: // gamestates.DUNGEON
         currentGameView = <DungeonScreen
+          statusMessage={this.props.statusMessage}
           player={this.props.player}
           functions={this.props.functions}
-          message={this.props.message}
           loot={this.props.ground_items}
         />;
         break;
@@ -63,7 +63,7 @@ export default class GameView extends React.Component {
         break;
       default:
         currentGameView = (
-          <div>OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!</div>
+          <div>Invalid game state! How did you get here?</div>
         );
     } // End of switch
     return (
@@ -77,10 +77,10 @@ export default class GameView extends React.Component {
 
 class ActionBar extends React.Component {
   render() {
-
     // TODO: comment this, uncomment next line
     var actions = <button> Sample Text </button>
     // var actions;
+
     if(this.props.actions != null){
       actions = Object.entries(this.props.actions).map(([key, obj]) => {
           return <button key={key} onClick={obj.action}> {obj.text} </button>
@@ -99,21 +99,22 @@ class DungeonScreen extends React.Component {
     var actions = [
       {text: "Explore the Dungeon", action: this.props.functions.explore},
     ]
-    let renderLoot = ()=> {
-      var lootTable=[];
-      if(this.props.loot != null && this.props.loot.length > 1){
+    let renderMessage = ()=> {
+      if(this.props.statusMessage != null && this.props.statusMessage.length > 1){
         // Loot exists, render it
+        return(<blockquote>{this.props.statusMessage}</blockquote>)
       } else {
         // TODO: select a randomly generated empty set dressing when loot is empty
-        lootTable.push(<div>The empty cavern floor stretches out before you.</div>);
+        return(<blockquote>The empty cavern floor stretches out before you.</blockquote>);
       }
-      return lootTable;
     }
     return (
       <div className="view-dungeon">
-        <div className="view-dungeon-text">{this.props.message}</div>
-        {renderLoot()}
-        <ActionBar/>
+        <h3>Dungeon - Level 1</h3>
+        {renderMessage()}
+        <ActionBar
+          actions={actions}
+        />
       </div>
     )
   }
@@ -138,7 +139,9 @@ class BattleScreen extends React.Component {
           <ProgressBar progress={this.props.enemy.health} progressMax={this.props.enemy.health_max} color="red" bgColor="white" />
           {statusEffects()}
         </div>
-        <ActionBar/>
+        <ActionBar
+          actions={actions}
+        />
       </div>
     );
   }
@@ -173,7 +176,7 @@ class CharacterScreen extends React.Component {
           {createSkills()}
         </div>
         <h2>Monsters Slain</h2>
-        <div classname="character-stats"> PLACEHOLDER STATS
+        <div className="character-stats"> PLACEHOLDER STATS
           <div>Slimes: 16</div>
           <div>Kobolds: 0</div>
           <div>Behirs: 1</div>

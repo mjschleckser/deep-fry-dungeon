@@ -64,8 +64,10 @@ var playerObj = {
 
   health: 85,
   health_max: 100,
+  health_regen: 1,
   mana: 33,
   mana_max: 100,
+  mana_regen: 2,
   mana_reserved: 20,  // Amount of mana reserved for passive spells
   // mana + mana_reserved < mana_max (always)
 
@@ -108,7 +110,6 @@ function App() {
   );
 }
 
-
 // Game
 // Master controller class. Handles all game-related events & owns player state
 class Game extends React.Component {
@@ -116,9 +117,9 @@ class Game extends React.Component {
     super(props);
     this.state = {
       statusCode: gamestates.DUNGEON,  // Governs which window we're displaying
+      statusMessage: "", // Message to display to the player
       player: playerObj,
       enemy: null,
-      message: "Welcome to the dungeon.",
       ground_items: [],
     }
   }
@@ -128,7 +129,7 @@ class Game extends React.Component {
   dungeonState(message){
     this.setState({
       statusCode: gamestates.DUNGEON,
-      message: message,
+      statusMessage: message
     });
   }
   // Sets state to Battle; sets monsters to the selected monster
@@ -175,7 +176,7 @@ class Game extends React.Component {
 
   /************ COMBAT FUNCTIONS ************/
   attack(){
-    var rand = Math.floor((Math.random() * 100) + 1);
+    var rand = Math.floor((Math.random() * 100) + 1); // 1-100
     var damage = 8;
     if(rand < this.state.player.skills.anatomy.value)// check for crit
       damage = (damage * 2);
@@ -196,24 +197,31 @@ class Game extends React.Component {
       this.setState({enemy: e});
     }
   }
-  takeDamage(){
+
+
+  /************ PLAYER STAT MODIFIERS ************/
+  playerHealthChange( amount, isDamage ){
     var np = this.state.player;
-    np.health -= 10;
+    np.health = (isDamage ? np.health - amount : np.health + amount)
+    // If player is killed
+    if(np.health <= 0){
+      // TODO: State transition to death
+    }
+    // If HP cap is exceeded
+    if(np.health >= np.health_max){
+      np.health = np.health_max;
+    }
     this.setState({ player: np })
   }
-  addMana(){
+
+  spendMana( manaAmount ){
     var np = this.state.player;
-    np.mana += 10;
+    np.mana -= manaAmount;
     this.setState({ player: np })
   }
-  removeMana(){
+  gainMana( manaAmount ){
     var np = this.state.player;
-    np.mana -= 10;
-    this.setState({ player: np })
-  }
-  addReservedMana(){
-    var np = this.state.player;
-    np.mana_reserved += 10;
+    np.mana += manaAmount;
     this.setState({ player: np })
   }
   removeReservedMana(){
@@ -237,15 +245,24 @@ class Game extends React.Component {
     // }
     // console.log(results);
 
-    // Add 10 random items to player inventory
+    // Add n random items to player inventory
     var np = this.state.player;
-    for(var i = 0; i < 14; i++){
+    for(var i = 0; i < 1; i++){
       var newItem = generateItem();
       np.inventory.push(newItem);
     }
     this.setState({player: np});
     console.log(this.state.player.inventory)
+
+    // *************** PRIMARY GAME LOOP ************** //
+    // Begin an interval for the game clock. Runs 4/second.
+    setInterval(() => {
+      console.log("Tock.")
+      this.playerHealthChange(.25, false);
+    }, 250);
   }
+
+
   // Draws the game
   render() {
     // Bind and pass functions to the GameView
@@ -255,7 +272,7 @@ class Game extends React.Component {
       battleState: this.battleState.bind(this),
       forceGameState: this.forceGameState.bind(this),
       explore: this.explore.bind(this),
-      takeDamage: this.takeDamage.bind(this),
+      playerHealthChange: this.playerHealthChange.bind(this),
       attack: this.attack.bind(this),
     }
     var statusFunctions = {
@@ -278,7 +295,7 @@ class Game extends React.Component {
           <GameView
             functions={gameViewFunctions}
             statusCode={this.state.statusCode}
-            message={this.state.message}
+            statusMessage={this.state.statusMessage}
             player={this.state.player}
             enemy={this.state.enemy}
             ground_items={this.state.ground_items}
@@ -301,13 +318,17 @@ class Status extends React.Component {
     // const skills = Object.entries(this.props.player.skills).map(([key, obj]) => {
     //     return <h4 key={key}> {obj.display_name} : {obj.value} </h4>
     // })
+
+    // var roundedHP = Math.round(this.props.player.health);
+    var roundedHP = (this.props.player.health);
+
     return (
       <div className="menu-status">
           <h1 className="title"> {this.props.player.name} </h1>
           <div className="subtitle">Level {this.props.player.level} {this.props.player.class}</div>
           <br />
           <h2> Health </h2>
-            <ProgressBar progress={this.props.player.health} progressMax={this.props.player.health_max} color="red" bgColor="white" />
+            <ProgressBar progress={roundedHP} progressMax={this.props.player.health_max} color="red" bgColor="white" />
           <h2> Mana </h2>
             <ManaBar player={this.props.player} />
           <br />

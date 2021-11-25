@@ -23,7 +23,9 @@
 
 /* Styles for icon buttons e.g. "CLOSE" x */
 .icon-button {
-  height:35px;
+  background-image: url("../svg/utility-close.svg");
+  background-color: red;
+  height: 35px;
   width: 35px;
   position: absolute;
   top: 0;  right: 0;
@@ -31,17 +33,12 @@
   cursor: pointer;
 }
 .icon-button > svg {
-  height: 100%;
-  width: 100%;
+  position: absolute;
+  top: 1px; left: 1px;
+  height: 30px;
+  width: 30px;
 }
 
-.menu-test-please-remove-me-now {
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-  background-color: red;
-  text-align: center;
-}
 
 /********** Styles for Intro screen **********/
 .view-intro{
@@ -53,6 +50,7 @@
 /********** Styles for Dungeon screen **********/
 .view-dungeon{
   position: relative;
+  text-align: center;
   font-family: "Consolas", monospace;
   height: 100%;
 }
@@ -77,7 +75,9 @@
 
 /********** Styles for Battle screen **********/
 .view-battle {
+  text-align: center;
   position: relative;
+  height: 100%;
 }
 .view-battle-text {
   /* font-family: "Luminari", fantasy, serif; */
@@ -105,7 +105,10 @@
 
 
 /********** Styles for Inventory screen **********/
-.inventory { position: relative; }
+.inventory {
+  position: relative;
+  text-align: center;
+}
 .inventory-container {
   display: flex;
   flex-direction: row;
