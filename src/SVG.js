@@ -61,13 +61,3 @@ export { ReactComponent as Gloves02 } from './svg/equipment/armor-gloves-metal.s
 
 //// Cookware
 export { ReactComponent as Pot01 } from './svg/equipment/equip-cauldron.svg';
-
-
-////////// MONSTER IMAGES - ORGANIZED BY DUNGEON THEME
-// Undead, aquatic, etc.
-// CLASSIC DUNGEON MONSTERS
-export {ReactComponent as Gremlin} from './svg/enemies/gremlin.svg';
-export {ReactComponent as LootGoblin} from './svg/enemies/goblin-loot.svg';
-export {ReactComponent as Imp} from './svg/enemies/devil-imp.svg';
-export {ReactComponent as Zombie} from './svg/enemies/undead-zombie.svg';
-export {ReactComponent as Ogre} from './svg/enemies/giants-ogre.svg';

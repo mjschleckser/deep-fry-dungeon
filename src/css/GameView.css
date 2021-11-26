@@ -17,7 +17,6 @@
   text-align: center;
 }
 .menu-actionbar > button {
-  height: calc(10px + 4vh);
   margin: 0 5px 0 5px;
   /* width: 100%; */
 }

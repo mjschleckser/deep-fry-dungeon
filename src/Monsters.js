@@ -45,7 +45,7 @@ export const recipes = {
 // Definition for all monster constants
 export const monsters = {
   //// Tier 1 Monsters ////
-  slime: {
+  gremlin: {
     name: "gremlin",
     health_max: 20,
     image: <Gremlin className="monster"/>,
@@ -60,4 +60,19 @@ export const monsters = {
     health_max: 45,
     image: <Ogre className="monster"/>,
   },
+  zombie: {
+    name: "zombie",
+    health_max: 30,
+    image: <Zombie className="monster"/>,
+  },
 }
+
+// Defines levels and monsters found per level
+export const levels = [
+  [
+    { monster: monsters.gremlin, weight: 50},
+    { monster: monsters.imp, weight: 50},
+    { monster: monsters.zombie, weight: 35},
+    { monster: monsters.ogre, weight: 20},
+  ],
+];

@@ -3,7 +3,7 @@ import React from 'react';
 import GameView from './GameView';
 import ProgressBar from './Utilities';
 // Import classes & enums
-import { Monster, monsters, recipes } from './Monsters';
+import { Monster, monsters, levels, recipes } from './Monsters';
 import { Item, generateItem } from './Items';
 import { spells } from './Magic';
 //Import CSS
@@ -169,9 +169,26 @@ class Game extends React.Component {
 
   /************ EXPLORATION FUNCTIONS ************/
   explore(){
-    var rand = Math.floor((Math.random() * 100) + 1); // 1-100 inclusive
-    console.log("Generated a " + rand + " on encounter roll");
-    this.battleState(new Monster(monsters.slime));
+    // TODO: Swap this out for the actual level variable
+    var currentLevel = this.state.player.level;
+    var encounters = levels[currentLevel - 1];
+    var weightSum = 0;
+
+    for( var i = 0; i < encounters.length; i++ ){
+        weightSum += encounters[i].weight;
+    }
+    // console.log("weightSum: "+weightSum);
+    var rand = Math.random()*weightSum;
+    console.log("rand: "+rand);
+    for( var i = 0; i < encounters.length; i++ ){
+        rand -= encounters[i].weight;
+        if (rand <= 0){
+          this.battleState(new Monster(encounters[i].monster));
+          return;
+        }
+    }
+    // We shouldn't get here - we should've selected a random choice by now
+    console.error("Error in random encounter generation!");
   }
 
   /************ COMBAT FUNCTIONS ************/
