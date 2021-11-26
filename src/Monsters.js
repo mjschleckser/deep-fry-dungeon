@@ -1,9 +1,16 @@
 import React from 'react';
 import './css/Monsters.css';
 // Image imports
-import {
-  Gremlin,
-} from './SVG';
+
+
+////////// MONSTER IMAGES - ORGANIZED BY DUNGEON THEME
+// Undead, aquatic, etc.
+// CLASSIC DUNGEON MONSTERS
+import {ReactComponent as Gremlin} from './svg/enemies/gremlin.svg';
+import {ReactComponent as LootGoblin} from './svg/enemies/goblin-loot.svg';
+import {ReactComponent as Imp} from './svg/enemies/devil-imp.svg';
+import {ReactComponent as Zombie} from './svg/enemies/undead-zombie.svg';
+import {ReactComponent as Ogre} from './svg/enemies/giants-ogre.svg';
 
 // Monster class
 // A monster class is a single instance of a monster, with its own HP/MP
@@ -46,6 +53,11 @@ export const monsters = {
   imp: {
     name: "imp",
     health_max: 15,
-    image: <Gremlin className="monster"/>,
+    image: <Imp className="monster"/>,
+  },
+  ogre: {
+    name: "ogre",
+    health_max: 45,
+    image: <Ogre className="monster"/>,
   },
 }
