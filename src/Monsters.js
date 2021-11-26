@@ -20,13 +20,16 @@ export class Monster {
     return this.image;
   }
   getLoot(){
-
+    // TODO: Generate some random items & gold & monster bits
   }
   constructor(monsterConst){
+    // TODO: there has to be a better way to do this
     this.name = monsterConst.name;
     this.health = monsterConst.health_max;
     this.health_max = monsterConst.health_max;
     this.image = monsterConst.image;
+    this.damage = monsterConst.damage;
+    this.damage_interval = monsterConst.damage_interval;
     this.loot = this.getLoot(monsterConst.level);
   }
 }
@@ -48,21 +51,29 @@ export const monsters = {
   gremlin: {
     name: "gremlin",
     health_max: 20,
+    damage: 3,
+    damage_interval: 333,
     image: <Gremlin className="monster"/>,
   },
   imp: {
     name: "imp",
     health_max: 15,
+    damage: 2,
+    damage_interval: 250,
     image: <Imp className="monster"/>,
   },
   ogre: {
     name: "ogre",
     health_max: 45,
+    damage: 20,
+    damage_interval: 750,
     image: <Ogre className="monster"/>,
   },
   zombie: {
     name: "zombie",
     health_max: 30,
+    damage: 10,
+    damage_interval: 1000,
     image: <Zombie className="monster"/>,
   },
 }

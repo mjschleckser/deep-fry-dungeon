@@ -223,6 +223,8 @@ class Game extends React.Component {
 
     if(np.health <= 0){
       // TODO: State transition to death
+      np.health = 0;
+      alert("You died!");
     }
 
     if(np.health >= np.health_max){
@@ -278,7 +280,7 @@ class Game extends React.Component {
     // *************** PRIMARY GAME LOOP ************** //
     // Begin an interval for the game clock. Runs 4/second.
     setInterval(() => {
-      console.log("Tock.")
+      // console.log("Tock.")
       this.modifyHealth(1, false);
       this.modifyMana(2, false)
     }, 250);

@@ -92,6 +92,13 @@
   border: 1px solid black;
 }
 
+.battle-enemycontainer {
+  position: relative;
+}
+.attack-circle-wrapper {
+  position: absolute;
+  top: calc(50% - 50px); left: calc(50% - 50px);
+}
 
 /**********************************************/
 /********** Beginning of Menu styles **********/

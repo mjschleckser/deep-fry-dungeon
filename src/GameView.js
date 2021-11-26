@@ -136,6 +136,28 @@ class DungeonScreen extends React.Component {
 ///////////////////////////////////////////////////////////////////////////////
 
 class BattleScreen extends React.Component {
+  // Begin battle loop here
+  componentDidMount(){
+    var count = 0;
+    var maxcount = this.props.enemy.damage_interval;
+    console.log("Mounted!")
+    console.log(this.props.enemy);
+    var battleInterval = setInterval(() => {
+      count += 10;
+      // console.log("Count: "+count+" Maxcount: "+maxcount);
+      if(count >= maxcount){
+        count = 0;
+        this.props.functions.modifyHealth(this.props.enemy.damage, true);
+      }
+    }, 10);
+    this.setState({battleInterval: battleInterval});
+  };
+
+  // Terminate battle loop, clean up
+  componentWillUnmount(){
+    clearInterval(this.state.battleInterval);
+  }
+
   render(){
     var actions = [
       {text: "Attack", action: this.props.functions.attack},
@@ -150,7 +172,12 @@ class BattleScreen extends React.Component {
         <br />
         <div className="view-battle-health">
           <h2>{capitalizeEachWord(this.props.enemy.name)}</h2>
-          {this.props.enemy.getImage()}
+          <div className="battle-enemycontainer">
+            {this.props.enemy.getImage()}
+            <svg className="attack-circle-wrapper" height="100" width="100">
+              <circle cx="50" cy="50" r="40" stroke="black" strokeWidth="10" fill="transparent"/>
+            </svg>
+          </div>
           <ProgressBar progress={this.props.enemy.health} progressMax={this.props.enemy.health_max} color="red" bgColor="white" />
           {statusEffects()}
         </div>
