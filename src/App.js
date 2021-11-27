@@ -122,6 +122,22 @@ class Game extends React.Component {
       enemy: null,
       ground_items: [],
     }
+
+    /***** Loads the state from the cookie instead of a fresh load *****/
+    // this.state = JSON.parse(document.cookie);
+  }
+
+  /************ GAME SAVE/LOAD FUNCTIONS ************/
+  saveGameStateToCookies(){
+    var stateCookie = JSON.stringify(this.state);
+    document.cookie = stateCookie;
+  }
+
+  loadGameStateFromCookies(){
+    var stateCookie = document.cookie;
+    var newState = JSON.parse(stateCookie);
+    console.log(newState);
+    this.setState(  newState  );
   }
 
   /************ SCREEN TRANSITION FUNCTIONS ************/
@@ -273,7 +289,6 @@ class Game extends React.Component {
       np.inventory.push(newItem);
     }
     this.setState({player: np});
-    console.log(this.state.player.inventory)
 
     // *************** PRIMARY GAME LOOP ************** //
     // Begin an interval for the game clock.
@@ -285,6 +300,9 @@ class Game extends React.Component {
         this.modifyHealth(this.state.player.health_regen, false);
         this.modifyMana(this.state.player.mana_regen, false);
         count = 0;
+        // Every HP/MP update, save the game
+        // NOTE: This may need to be moved elsewhere later
+        this.saveGameStateToCookies();
       }
     }, gameIntervalTickRate);
     this.setState({gameInterval: gameInterval});
