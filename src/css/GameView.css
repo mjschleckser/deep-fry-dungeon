@@ -86,13 +86,13 @@
   top: calc(20px);
   font-family: "Consolas", monospace;
 }
-.view-battle-health {
+.view-battle-enemycontainer {
   background-color: #999;
   margin: 50px;
   border: 1px solid black;
 }
 
-.battle-enemycontainer {
+.view-battle-enemy {
   position: relative;
 }
 .attack-circle-wrapper {

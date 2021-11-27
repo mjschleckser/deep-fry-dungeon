@@ -58,17 +58,17 @@ export const rarities = [
 ]
 
 var playerObj = {
-  name: "Ser Bearington",
+  name: "Rodney",
   level: 1,
-  class: "bearbarian",
+  class: "Rogue",
 
   health: 85,
   health_max: 100,
-  health_regen: 2,  // HP regen per second
-  mana: 33,
+  health_regen: 1,  // HP regen per second
+  mana: 50,
   mana_max: 100,
-  mana_regen: 10,  // MP regen per second
-  mana_reserved: 20,  // Amount of mana reserved for passive spells
+  mana_regen: 5,  // MP regen per second
+  mana_reserved: 0,  // Amount of mana reserved for passive spells
   // mana + mana_reserved < mana_max (always)
 
   // Skill cap is 60 for now
@@ -136,10 +136,10 @@ class Game extends React.Component {
   // DO NOT PASS IN MONSTER CONSTANTS - only new instances of Monster class
   battleState(monster){
     if(monster instanceof Monster !== true){
-      alert("Bzzt! Wrongo!");
+      console.error("Invalid monster passed to battleState!")
       return;
     }
-    console.log("Encountered!");
+    // Encounter the passed monster
     this.setState({
       statusCode: gamestates.BATTLE,
       enemy: monster,
@@ -177,9 +177,7 @@ class Game extends React.Component {
     for( var i = 0; i < encounters.length; i++ ){
         weightSum += encounters[i].weight;
     }
-    // console.log("weightSum: "+weightSum);
     var rand = Math.random()*weightSum;
-    console.log("rand: "+rand);
     for( var i = 0; i < encounters.length; i++ ){
         rand -= encounters[i].weight;
         if (rand <= 0){
@@ -224,7 +222,7 @@ class Game extends React.Component {
     if(np.health <= 0){
       // TODO: State transition to death
       np.health = 0;
-      alert("You died!");
+      // alert("You died!");
     }
 
     if(np.health >= np.health_max){
@@ -283,7 +281,7 @@ class Game extends React.Component {
     var count = 0;
     var gameInterval = setInterval(() => {
       count += gameIntervalTickRate;
-      if(count >= 250){
+      if(count >= 500){
         this.modifyHealth(this.state.player.health_regen, false);
         this.modifyMana(this.state.player.mana_regen, false);
         count = 0;
@@ -386,10 +384,11 @@ class ManaBar extends React.Component {
     }
     // TODO: Code the color of the text to always contrast both other colors
 
+    var reservedMana = this.props.player.mana_reserved;
     return (
       <div className="mana-bar-outer">
         <div className="mana-bar-inner" style={innerBarStyle}></div>
-        <span className="mana-bar-reserved" style={reservedStyle}> {this.props.player.mana_reserved} &nbsp;</span>
+        <span className="mana-bar-reserved" style={reservedStyle}> {reservedMana > 0 ? reservedMana : ""} &nbsp;</span>
         <span className="mana-bar-text"> &nbsp; {this.props.player.mana} / {this.props.player.mana_max} </span>
       </div>
     )

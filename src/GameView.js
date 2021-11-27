@@ -195,10 +195,9 @@ class BattleScreen extends React.Component {
     return (
       <div className="view-battle">
         <div className="view-battle-text">A {this.props.enemy.name} jumps out from the shadows!</div>
-        <br />
-        <div className="view-battle-health">
+        <div className="view-battle-enemycontainer">
           <h2>{capitalizeEachWord(this.props.enemy.name)}</h2>
-          <div className="battle-enemycontainer">
+          <div className="view-battle-enemy">
             {this.props.enemy.getImage()}
             <svg className="attack-circle-wrapper" height="100" width="100">
               <circle
@@ -210,6 +209,11 @@ class BattleScreen extends React.Component {
           </div>
           <ProgressBar progress={this.props.enemy.health} progressMax={this.props.enemy.health_max} color="red" bgColor="white" />
           {statusEffects()}
+        </div>
+        <div className="view-battle-playeractions">
+          <button>Attack</button>
+          <button>Magic: Fireball</button>
+          <button>Magic: Shield </button>
         </div>
         <ActionBar
           actions={actions}
