@@ -64,10 +64,10 @@ var playerObj = {
 
   health: 85,
   health_max: 100,
-  health_regen: 1,
+  health_regen: 2,  // HP regen per second
   mana: 33,
   mana_max: 100,
-  mana_regen: 2,
+  mana_regen: 10,  // MP regen per second
   mana_reserved: 20,  // Amount of mana reserved for passive spells
   // mana + mana_reserved < mana_max (always)
 
@@ -278,12 +278,18 @@ class Game extends React.Component {
     console.log(this.state.player.inventory)
 
     // *************** PRIMARY GAME LOOP ************** //
-    // Begin an interval for the game clock. Runs 4/second.
-    setInterval(() => {
-      // console.log("Tock.")
-      this.modifyHealth(1, false);
-      this.modifyMana(2, false)
-    }, 250);
+    // Begin an interval for the game clock.
+    const gameIntervalTickRate = 50;
+    var count = 0;
+    var gameInterval = setInterval(() => {
+      count += gameIntervalTickRate;
+      if(count >= 250){
+        this.modifyHealth(this.state.player.health_regen, false);
+        this.modifyMana(this.state.player.mana_regen, false);
+        count = 0;
+      }
+    }, gameIntervalTickRate);
+    this.setState({gameInterval: gameInterval});
   }
 
 

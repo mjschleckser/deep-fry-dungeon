@@ -136,20 +136,45 @@ class DungeonScreen extends React.Component {
 ///////////////////////////////////////////////////////////////////////////////
 
 class BattleScreen extends React.Component {
+  constructor(props){
+    super(props);
+    // Calculate starting offset of enemy attack circle
+    // 40 = current circle radius
+    var circumference = 40 * 2 * Math.PI;
+    var circleOffset = ((circumference - 35) / 100) * circumference;
+    this.state = {
+      circleStyle: {
+        transform: "rotate(-90deg)",
+        transformOrigin: "50% 50%",
+        // transition: "0.02s stroke-dashoffset",
+        strokeDasharray : circumference, circumference,
+        strokeDashoffset : circumference
+      }
+    }
+  }
+
   // Begin battle loop here
   componentDidMount(){
+    const battleIntervalTickRate = 10;
     var count = 0;
-    var maxcount = this.props.enemy.damage_interval;
-    console.log("Mounted!")
-    console.log(this.props.enemy);
+    var maxcount = this.props.enemy.damage_interval
     var battleInterval = setInterval(() => {
-      count += 10;
-      // console.log("Count: "+count+" Maxcount: "+maxcount);
+      // Increment attack timer
+      count += battleIntervalTickRate;
+      // Process attack if needed
       if(count >= maxcount){
         count = 0;
-        this.props.functions.modifyHealth(this.props.enemy.damage, true);
+        // Calculate damage from DPS and damage_interval
+        var damage = this.props.enemy.dps * (this.props.enemy.damage_interval / 1000);
+        this.props.functions.modifyHealth(damage, true);
       }
-    }, 10);
+      // Adjust enemy attack circle
+      var circumference = 40 * 2 * Math.PI;
+      var offset = circumference + ((count / maxcount) * circumference);
+      var circleStyle = Object.assign({}, this.state.circleStyle);
+      circleStyle.strokeDashoffset = offset;
+      this.setState( {circleStyle: circleStyle})
+    }, battleIntervalTickRate);
     this.setState({battleInterval: battleInterval});
   };
 
@@ -166,6 +191,7 @@ class BattleScreen extends React.Component {
     var statusEffects = ()=>{
       // this.props.enemy.statusEffects;
     }
+
     return (
       <div className="view-battle">
         <div className="view-battle-text">A {this.props.enemy.name} jumps out from the shadows!</div>
@@ -175,7 +201,11 @@ class BattleScreen extends React.Component {
           <div className="battle-enemycontainer">
             {this.props.enemy.getImage()}
             <svg className="attack-circle-wrapper" height="100" width="100">
-              <circle cx="50" cy="50" r="40" stroke="black" strokeWidth="10" fill="transparent"/>
+              <circle
+                style={this.state.circleStyle}
+                cx="50" cy="50" r="40"
+                stroke="black" strokeWidth="6"
+                fill="transparent"/>
             </svg>
           </div>
           <ProgressBar progress={this.props.enemy.health} progressMax={this.props.enemy.health_max} color="red" bgColor="white" />
