@@ -124,6 +124,7 @@ class Game extends React.Component {
     }
 
     /***** Loads the state from the cookie instead of a fresh load *****/
+    // TODO: break out into a full function?
     // this.state = JSON.parse(document.cookie);
   }
 
@@ -300,22 +301,11 @@ class Game extends React.Component {
   //*************** REACT FUNCTIONS **************/
   // Executes once on component load. Use for testing new code stuff
   componentDidMount(){
-    // Function to test randomness
-    // var results = {};
-    // for(var i = 0; i < 30; i++){
-    //   var result = generateItem();
-    //   if(results[result] === undefined){
-    //     results[result] = 1;
-    //   } else {
-    //     results[result] = results[result] + 1;
-    //   }
-    // }
-    // console.log(results);
-
     // Add n random items to player inventory
     var np = this.state.player;
     for(var i = 0; i < 18; i++){
       var newItem = generateItem();
+      // TODO: Make this use an actual inventory function, check against max limit
       np.inventory.push(newItem);
       console.log(newItem);
     }
