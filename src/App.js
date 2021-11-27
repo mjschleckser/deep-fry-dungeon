@@ -80,8 +80,8 @@ var playerObj = {
   // Items can be either in equipment (worn) or in inventory, not both
   // Equipped items do not count towards inventory limit
   inventory: [],
-  equipment: [],
-  inventory_slots: 20,
+  equipment: {},
+  inventory_slots: 30,
   spellbook: [spells.fireball, spells.magicmissile, spells.shield],
   active_spells: [spells.shield],
   cookbook: [recipes.slime_pudding, recipes.spider_stew],
@@ -182,18 +182,18 @@ class Game extends React.Component {
     this.setState({ statusCode: newStatusCode });
   }
 
-
   /************ EXPLORATION FUNCTIONS ************/
   explore(){
     // TODO: Swap this out for the actual level variable
     var currentLevel = this.state.player.level;
     var encounters = levels[currentLevel - 1];
-    var weightSum = 0;
 
-    for( var i = 0; i < encounters.length; i++ ){
-        weightSum += encounters[i].weight;
-    }
+    var weights = encounters.map(a => a.weight);
+    console.log(weights);
+    var weightSum = weights.reduce( (sum, curVal) => sum+curVal );
+    console.log(weightSum);
     var rand = Math.random()*weightSum;
+    console.log(rand);
     for( var i = 0; i < encounters.length; i++ ){
         rand -= encounters[i].weight;
         if (rand <= 0){
@@ -230,7 +230,7 @@ class Game extends React.Component {
   }
 
 
-  /************ PLAYER STAT MODIFIERS ************/
+  /************ PLAYER FUNCTIONS ************/
   modifyHealth( amount, isDamage ){
     var np = this.state.player;
     np.health = (isDamage ? np.health - amount : np.health + amount)
@@ -267,6 +267,36 @@ class Game extends React.Component {
     this.setState({ player: np })
   }
 
+  unequipItem( item ){
+
+  }
+  equipItem( newItem ){
+    if(newItem instanceof Item !== true){
+      console.error("Invalid item passed to equipItem!")
+      return;
+    }
+    var playerEquipment = this.state.player.equipment;
+    switch(newItem.item_type){
+      case "WEAPON":
+        playerEquipment[equip_slots.MAIN_HAND_ONE] = newItem;
+      case "HEAD":
+      case "TORSO":
+      case "LEGS":
+      case "BOOTS":
+      case "SHOULDERS":
+      case "NECK":
+      case "BELT":
+      case "GLOVES":
+      case "ARTIFACT":
+      case "RING":
+      case "COOKWARE":
+    }
+
+    var newPlayer = Object.assign({}, this.state.player);
+    newPlayer.equipment = playerEquipment
+    this.setState({ player : newPlayer });
+  }
+
   //*************** REACT FUNCTIONS **************/
   // Executes once on component load. Use for testing new code stuff
   componentDidMount(){
@@ -284,9 +314,10 @@ class Game extends React.Component {
 
     // Add n random items to player inventory
     var np = this.state.player;
-    for(var i = 0; i < 1; i++){
+    for(var i = 0; i < 18; i++){
       var newItem = generateItem();
       np.inventory.push(newItem);
+      console.log(newItem);
     }
     this.setState({player: np});
 
@@ -320,12 +351,16 @@ class Game extends React.Component {
       explore: this.explore.bind(this),
       modifyHealth: this.modifyHealth.bind(this),
       attack: this.attack.bind(this),
+      equipItem: this.equipItem.bind(this),
     }
     var statusFunctions = {
       inventoryScreen: this.menuScreen.bind(this, gamestates.INVENTORY),
       spellbookScreen: this.menuScreen.bind(this, gamestates.SPELLBOOK),
       cookbookScreen: this.menuScreen.bind(this, gamestates.COOKBOOK),
       characterScreen: this.menuScreen.bind(this, gamestates.CHARACTER),
+    }
+    var equipmentFunctions = {
+      unequipItem: this.unequipItem.bind(this),
     }
 
     return (
@@ -349,6 +384,7 @@ class Game extends React.Component {
         </div>
         <div className="game-pane-right">
           <EquipmentDisplay
+            functions={equipmentFunctions}
             equipment={this.state.player.equipment}
           />
         </div>
@@ -414,6 +450,9 @@ class ManaBar extends React.Component {
 }
 
 class EquipmentDisplay extends React.Component {
+  constructor (props){
+    super(props);
+  }
   // TODO: properly implement this function
   // Fetches the item equipped in the given slot
   getEmpty(slot){
@@ -447,13 +486,11 @@ class EquipmentDisplay extends React.Component {
     return svg;
   }
   getEquipped(equipSlot){
-    for(var i = 0; i < this.props.equipment.length; i++){
-      var item = this.props.equipment[i];
-      if(item.equip_slot === equipSlot){
-        return item.getImage();
-      }
+    if(this.props.equipment[equipSlot] == null){
+      return this.getEmpty(equipSlot);
+    } else {
+      return this.props.equipment[equipSlot].getImage();
     }
-    return this.getEmpty(equipSlot);
   }
   render() {
     var createTable = ()=>{

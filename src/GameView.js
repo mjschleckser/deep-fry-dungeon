@@ -276,13 +276,23 @@ class CharacterScreen extends React.Component {
 ///////////////////////////////////////////////////////////////////////////////
 
 class InventoryScreen extends React.Component {
+  constructor (props){
+    super(props);
+    this.equipInventoryItem = this.equipInventoryItem.bind(this);
+
+  }
+  equipInventoryItem(e){
+    // console.log(e.currentTarget.id);
+    var item = this.props.player.inventory[e.currentTarget.id];
+    this.props.functions.equipItem(item);
+  }
   render(){
     var createInventory = ()=>{
       var table=[];
       for(let i=0; i < this.props.player.inventory_slots; i++){
         var item = this.props.player.inventory[i];
         table.push(
-          <div>{item!=null?item.getImage():" "}</div>
+          <div onClick={this.equipInventoryItem} id={i} key={i}>{item!=null?item.getImage():" "}</div>
         );
       } // End for loop
       return table;
