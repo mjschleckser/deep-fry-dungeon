@@ -185,18 +185,15 @@ class BattleScreen extends React.Component {
 
   render(){
     var actions = [
-      {text: "Attack", action: this.props.functions.attack},
+      // {text: "Attack", action: this.props.functions.attack},
       {text: "Run Away", action: () => {this.props.functions.dungeonState("You flee from the "+this.props.enemy.name+".")}},
     ]
-    var statusEffects = ()=>{
-      // this.props.enemy.statusEffects;
-    }
 
     return (
-      <div className="view-battle">
-        <div className="view-battle-text">A {this.props.enemy.name} jumps out from the shadows!</div>
-        <div className="view-battle-enemycontainer">
-          <h2>{capitalizeEachWord(this.props.enemy.name)}</h2>
+      <table className="view-battle"><tbody>
+        <tr><td className="view-battle-text">The {this.props.enemy.name} jumps out from the shadows!</td></tr>
+        <tr><td className="view-battle-enemycontainer">
+          <h2 style={{ margin: ".5em" }}>{capitalizeEachWord(this.props.enemy.name)}</h2>
           <div className="view-battle-enemy">
             {this.props.enemy.getImage()}
             <svg className="attack-circle-wrapper" height="100" width="100">
@@ -208,17 +205,22 @@ class BattleScreen extends React.Component {
             </svg>
           </div>
           <ProgressBar progress={this.props.enemy.health} progressMax={this.props.enemy.health_max} color="red" bgColor="white" />
-          {statusEffects()}
-        </div>
-        <div className="view-battle-playeractions">
-          <button>Attack</button>
-          <button>Magic: Fireball</button>
-          <button>Magic: Shield </button>
-        </div>
-        <ActionBar
-          actions={actions}
-        />
-      </div>
+        </td></tr>
+        <tr><td>
+          <table className="view-battle-playeractions" style={{width:"100%", height:"100%", tableLayout:"fixed"}}><tbody>
+            <tr>
+              <td><button>Magic: Fireball</button></td>
+              <td><button style={{fontSize:"2.5em"}} onClick={this.props.functions.attack}>Attack</button></td>
+              <td><button>Magic: Shield </button></td>
+            </tr>
+          </tbody></table>
+        </td></tr>
+        <tr><td>
+          <ActionBar
+            actions={actions}
+          />
+        </td></tr>
+      </tbody></table>
     );
   }
 }

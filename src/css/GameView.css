@@ -11,7 +11,7 @@
 .menu-actionbar { /* Shared between Dungeon & Battle views */
   position: absolute;
   bottom: 0px;
-  width: 100%;
+  width: calc(100% - 23px);
   padding: 10px;
   background-color: #515151;
   text-align: center;
@@ -82,13 +82,14 @@
 }
 .view-battle-text {
   /* font-family: "Luminari", fantasy, serif; */
-  position: relative;
-  top: calc(20px);
+  vertical-align: middle;
+  height: 6%;
   font-family: "Consolas", monospace;
 }
 .view-battle-enemycontainer {
   background-color: #999;
-  margin: 50px;
+  /* margin: 50px; */
+  height: 40%;
   border: 1px solid black;
 }
 

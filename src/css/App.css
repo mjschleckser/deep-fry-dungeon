@@ -1,3 +1,7 @@
+body {
+  margin: 0px;
+}
+
 .App {
   overflow: hidden;
 }
@@ -8,7 +12,8 @@
   text-align: center;
   background-color: #282c34;
   height: 5vh; min-height: 35px;
-  font-size: calc(10px + 2vmin);
+  /* font-size: calc(10px + 2vmin); */
+  font-size: 2em;
   color: white;
 }
 .App-footer{
