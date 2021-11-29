@@ -140,33 +140,66 @@ class BattleScreen extends React.Component {
     super(props);
     // Calculate starting offset of enemy attack circle
     // 40 = current circle radius
-    var circumference = 40 * 2 * Math.PI;
-    var circleOffset = ((circumference - 35) / 100) * circumference;
+    var enemyCircumference = 40 * 2 * Math.PI;
+    var playerCircumference = 40 * 2 * Math.PI;
     this.state = {
-      circleStyle: {
+      playerAttacking: true,
+      playerCircleStyle: {
         transform: "rotate(-90deg)",
         transformOrigin: "50% 50%",
-        // transition: "0.02s stroke-dashoffset",
-        strokeDasharray : circumference, circumference,
-        strokeDashoffset : circumference
+        strokeDasharray : playerCircumference, playerCircumference,
+        strokeDashoffset : playerCircumference
+      },
+      enemyCircleStyle: {
+        transform: "rotate(-90deg)",
+        transformOrigin: "50% 50%",
+        strokeDasharray : enemyCircumference, enemyCircumference,
+        strokeDashoffset : enemyCircumference
       }
     }
+    // Bind functions
+    this.handleAttack = this.handleAttack.bind(this);
+  }
+
+  handleAttack(){
+    this.setState({playerAttacking : (!this.state.playerAttacking) })
   }
 
   // Begin battle loop here
   componentDidMount(){
-    console.error(this.props.functions);
     const battleIntervalTickRate = 10;
-    var maxnum = this.props.enemy.attack_interval
+    var maxEnemyNum = this.props.enemy.attack_interval;
+    var maxPlayerNum = 1500; // this.props.player.attack_interval;
     var battleInterval = setInterval(() => {
-      // Get closer to attacking
-      var num = this.props.functions.incrementEnemyAttack(battleIntervalTickRate);
+      // Handle enemy attack
+      var enemyNum = this.props.functions.incrementEnemyAttack(battleIntervalTickRate);
       // Adjust enemy attack circle
       var circumference = 40 * 2 * Math.PI;
-      var offset = circumference + ((num / maxnum) * circumference);
-      var circleStyle = Object.assign({}, this.state.circleStyle);
-      circleStyle.strokeDashoffset = offset;
-      this.setState( {circleStyle: circleStyle})
+      var offset = circumference + ((enemyNum / maxEnemyNum) * circumference);
+      var enemyCircleStyle = Object.assign({}, this.state.enemyCircleStyle);
+      enemyCircleStyle.strokeDashoffset = offset;
+      this.setState( {enemyCircleStyle: enemyCircleStyle})
+
+      // Handle player attack
+      if(this.state.playerAttacking){
+        var playerNum = this.props.functions.incrementPlayerAttack(battleIntervalTickRate);
+        if( playerNum % 250 == 0){
+          console.log(playerNum);
+        }
+        // Adjust player attack circle
+        circumference = 40 * 2 * Math.PI;
+        offset = circumference + ((playerNum / maxPlayerNum) * circumference);
+        var playerCircleStyle = Object.assign({}, this.state.playerCircleStyle);
+        playerCircleStyle.strokeDashoffset = offset;
+        playerCircleStyle.visibility = "visible";
+        this.setState( {playerCircleStyle: playerCircleStyle});
+      } else{
+        // If not attacking, hide attack
+        var playerCircleStyle = Object.assign({}, this.state.playerCircleStyle);
+        playerCircleStyle.visibility = "hidden";
+        this.setState( {playerCircleStyle: playerCircleStyle})
+      }
+
     }, battleIntervalTickRate);
     this.setState({battleInterval: battleInterval});
   };
@@ -191,7 +224,7 @@ class BattleScreen extends React.Component {
             {this.props.enemy.getImage()}
             <svg className="attack-circle-wrapper" height="100" width="100">
               <circle
-                style={this.state.circleStyle}
+                style={this.state.enemyCircleStyle}
                 cx="50" cy="50" r="40"
                 stroke="black" strokeWidth="6"
                 fill="transparent"/>
@@ -203,7 +236,16 @@ class BattleScreen extends React.Component {
           <table className="view-battle-playeractions" style={{width:"100%", height:"100%", tableLayout:"fixed"}}><tbody>
             <tr>
               <td><button>Magic: Fireball</button></td>
-              <td><button style={{fontSize:"2.5em"}} onClick={this.props.functions.attack}>Attack</button></td>
+              <td>
+                <button style={{fontSize:"2.5em"}} onClick={this.handleAttack}>Attack</button>
+                <svg className="attack-circle-wrapper" height="100" width="100">
+                  <circle
+                    style={this.state.playerCircleStyle}
+                    cx="50" cy="50" r="40"
+                    stroke="black" strokeWidth="6"
+                    fill="transparent"/>
+                </svg>
+              </td>
               <td><button>Magic: Shield </button></td>
             </tr>
           </tbody></table>

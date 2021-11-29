@@ -71,6 +71,8 @@ var playerObj = {
   mana_reserved: 0,  // Amount of mana reserved for passive spells
   // mana + mana_reserved < mana_max (always)
 
+  attack_progress: 0,
+
   // Skill cap is 60 for now
   skills: {
     anatomy:    {name: "Anatomy", level: 1, xp: 50, xp_next: 400},
@@ -192,11 +194,8 @@ class Game extends React.Component {
     var encounters = levels[currentLevel - 1];
 
     var weights = encounters.map(a => a.weight);
-    console.log(weights);
     var weightSum = weights.reduce( (sum, curVal) => sum+curVal );
-    console.log(weightSum);
     var rand = Math.random()*weightSum;
-    console.log(rand);
     for( var i = 0; i < encounters.length; i++ ){
         rand -= encounters[i].weight;
         if (rand <= 0){
@@ -211,8 +210,8 @@ class Game extends React.Component {
   /************ COMBAT FUNCTIONS ************/
   incrementEnemyAttack( amount ){
     var e = this.state.enemy;
-    // Increment attack timer
-    e.attack_progress += amount;
+    // Increment attack timer, but don't attack while dead
+    if(e.health > 0) e.attack_progress += amount;
     // Process attack if needed
     if(e.attack_progress >= e.attack_interval){
       e.attack_progress = 0;
@@ -224,25 +223,32 @@ class Game extends React.Component {
     return e.attack_progress;
   }
 
-  attack(){
+  incrementPlayerAttack( amount ){
     var rand = Math.floor((Math.random() * 100) + 1); // 1-100
-    var damage = 8;
-
+    var damage = 5;
+    var p = this.state.player;
     var e = this.state.enemy;
-    e.health -= damage;
-    if(e.health <= 0){  // check for enemy death
-      // Play health CSS animation
-      e.health=0;
-      this.setState({enemy: e});
-      // After animation plays, remove enemy and change stage
-      setTimeout(()=>{
-        // TODO: Randomly generate a message, instead of always using this one
-        this.dungeonState("You vanquish the "+e.name+"!");
-        this.setState({enemy: null});
-      }, 350);
-    } else { // continue combat
-      this.setState({enemy: e});
+
+    p.attack_progress += amount;
+    if(p.attack_progress >= 1500){ // TODO: use an actual attack interval
+      // Trigger the attack
+      p.attack_progress = 0;
+      e.health -= damage;
+      if(e.health <= 0){  // check for enemy death
+        e.health=0;
+        this.setState({enemy: e});
+        setTimeout(()=>{
+          // After animation plays, remove enemy and change stage
+          // TODO: Randomly generate a message, instead of always using this one
+          this.dungeonState("You vanquish the "+e.name+"!");
+          e = null;
+        }, 350);
+      }
     }
+
+    this.setState({player: p, enemy: e});
+
+    return p.attack_progress;
   }
 
 
@@ -374,7 +380,7 @@ class Game extends React.Component {
       var newItem = generateItem();
       // TODO: Make this use an actual inventory function, check against max limit
       np.inventory.push(newItem);
-      console.log(newItem);
+      // console.log(newItem);
     }
     this.setState({player: np});
 
@@ -413,7 +419,7 @@ class Game extends React.Component {
       forceGameState: this.forceGameState.bind(this),
       explore: this.explore.bind(this),
       modifyHealth: this.modifyHealth.bind(this),
-      attack: this.attack.bind(this),
+      incrementPlayerAttack: this.incrementPlayerAttack.bind(this),
       equipItem: this.equipItem.bind(this),
       incrementEnemyAttack: this.incrementEnemyAttack.bind(this),
     }
