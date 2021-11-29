@@ -431,10 +431,12 @@ class Game extends React.Component {
       if(gs == gamestates.DUNGEON || gs == gamestates.BATTLE ){
         // Increment our count
         count += gameIntervalTickRate;
-        // Every 500 MS, apply a regeneration tick and reset the count
-        if(count >= 500){
-          this.modifyHealth(this.state.player.health_regen, false);
-          this.modifyMana(this.state.player.mana_regen, false);
+        // Every 500 MS, apply a regeneration tick and reset the count. Regen faster out of combat
+        if(count >= 500 || (count >= 200 && gs == gamestates.DUNGEON)){
+          var hp_regen = this.state.player.health_regen;
+          var mp_regen = this.state.player.mana_regen;
+          this.modifyHealth(hp_regen, false);
+          this.modifyMana(mp_regen, false);
           count = 0;
         }
       }
