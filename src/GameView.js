@@ -20,7 +20,7 @@ export default class GameView extends React.Component {
   render() {
     var currentGameView;
     var actions;
-    switch(this.props.statusCode){
+    switch(this.props.gameState){
       case 0: // gamestates.DUNGEON
         currentGameView = <DungeonScreen
           statusMessage={this.props.statusMessage}
@@ -155,22 +155,15 @@ class BattleScreen extends React.Component {
 
   // Begin battle loop here
   componentDidMount(){
+    console.error(this.props.functions);
     const battleIntervalTickRate = 10;
-    var count = 0;
-    var maxcount = this.props.enemy.damage_interval
+    var maxnum = this.props.enemy.attack_interval
     var battleInterval = setInterval(() => {
-      // Increment attack timer
-      count += battleIntervalTickRate;
-      // Process attack if needed
-      if(count >= maxcount){
-        count = 0;
-        // Calculate damage from DPS and damage_interval
-        var damage = this.props.enemy.dps * (this.props.enemy.damage_interval / 1000);
-        this.props.functions.modifyHealth(damage, true);
-      }
+      // Get closer to attacking
+      var num = this.props.functions.incrementEnemyAttack(battleIntervalTickRate);
       // Adjust enemy attack circle
       var circumference = 40 * 2 * Math.PI;
-      var offset = circumference + ((count / maxcount) * circumference);
+      var offset = circumference + ((num / maxnum) * circumference);
       var circleStyle = Object.assign({}, this.state.circleStyle);
       circleStyle.strokeDashoffset = offset;
       this.setState( {circleStyle: circleStyle})
@@ -301,7 +294,7 @@ class InventoryScreen extends React.Component {
     return (
       <div className="inventory">
         <button className="icon-button" onClick={this.props.functions.returnToDungeon}><CloseIcon/></button>
-        <h2>Items in Backpack ({this.props.player.inventory_slots} slots)</h2>
+        <h2>Inventory</h2>
         <div className="inventory-container">
           {createInventory()}
         </div>

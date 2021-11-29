@@ -81,7 +81,7 @@ var playerObj = {
   // Equipped items do not count towards inventory limit
   inventory: [],
   equipment: {},
-  inventory_slots: 30,
+  inventory_slots: 28,
   spellbook: [spells.fireball, spells.magicmissile, spells.shield],
   active_spells: [spells.shield],
   cookbook: [recipes.slime_pudding, recipes.spider_stew],
@@ -98,7 +98,7 @@ var playerObj = {
 /*************** GENERIC TODOS ***************/
 function App() {
   return (
-    <div className="App">
+    <div className="App" >
       <header className="App-header">Deep Fry Dungeon </header>
       <Game />
       <footer className="App-footer">
@@ -116,12 +116,14 @@ class Game extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      statusCode: gamestates.DUNGEON,  // Governs which window we're displaying
+      gameState: gamestates.DUNGEON,  // Governs which window we're displaying
       statusMessage: "", // Message to display to the player
       player: playerObj,
       enemy: null,
       ground_items: [],
     }
+    // Bind functions
+    this.escFunction = this.escFunction.bind(this);
 
     /***** Loads the state from the cookie instead of a fresh load *****/
     // TODO: break out into a full function?
@@ -145,7 +147,7 @@ class Game extends React.Component {
   // Go to dungeon; display the selected message
   dungeonState(message){
     this.setState({
-      statusCode: gamestates.DUNGEON,
+      gameState: gamestates.DUNGEON,
       statusMessage: message
     });
   }
@@ -158,29 +160,29 @@ class Game extends React.Component {
     }
     // Encounter the passed monster
     this.setState({
-      statusCode: gamestates.BATTLE,
+      gameState: gamestates.BATTLE,
       enemy: monster,
     });
   }
   // if in battle/shop, go there: else dungeon
   returnToDungeon(){
     if(this.state.enemy != null) {  // if we are in a battle go back
-      this.setState({ statusCode: gamestates.BATTLE });
+      this.setState({ gameState: gamestates.BATTLE });
     } else { // otherwise return to what we were doing
-      this.setState({ statusCode: gamestates.DUNGEON });
+      this.setState({ gameState: gamestates.DUNGEON });
     }
   }
   // Transitions to the selected menu - if already there, returns to dungeon
-  menuScreen( newStatusCode ){
-    if(this.state.statusCode === newStatusCode){
+  menuScreen( newgameState ){
+    if(this.state.gameState === newgameState){
       this.returnToDungeon();
     } else {
-      this.setState({ statusCode: newStatusCode });
+      this.setState({ gameState: newgameState });
     }
   }
   // Sets the stage to the passed game state, with no checks
-  forceGameState( newStatusCode ){
-    this.setState({ statusCode: newStatusCode });
+  forceGameState( newgameState ){
+    this.setState({ gameState: newgameState });
   }
 
   /************ EXPLORATION FUNCTIONS ************/
@@ -207,11 +209,24 @@ class Game extends React.Component {
   }
 
   /************ COMBAT FUNCTIONS ************/
+  incrementEnemyAttack( amount ){
+    var e = this.state.enemy;
+    // Increment attack timer
+    e.attack_progress += amount;
+    // Process attack if needed
+    if(e.attack_progress >= e.attack_interval){
+      e.attack_progress = 0;
+      // Calculate damage from DPS and attack_interval
+      var damage = e.dps * (e.attack_interval / 1000);
+      this.modifyHealth(damage, true);
+    }
+    this.setState({enemy: e});
+    return e.attack_progress;
+  }
+
   attack(){
     var rand = Math.floor((Math.random() * 100) + 1); // 1-100
     var damage = 8;
-    if(rand < this.state.player.skills.anatomy.value)// check for crit
-      damage = (damage * 2);
 
     var e = this.state.enemy;
     e.health -= damage;
@@ -269,6 +284,7 @@ class Game extends React.Component {
   }
 
   unequipItem( item ){
+    // To make this easier, just pass in the slot that it's equipped to
 
   }
   equipItem( newItem ){
@@ -276,31 +292,82 @@ class Game extends React.Component {
       console.error("Invalid item passed to equipItem!")
       return;
     }
-    var playerEquipment = this.state.player.equipment;
+    var pe = this.state.player.equipment;
+    var pi = this.state.player.inventory;
     switch(newItem.item_type){
       case "WEAPON":
-        playerEquipment[equip_slots.MAIN_HAND_ONE] = newItem;
+        // if item already equipped, unequip it before overwrite
+        if(pe[equip_slots.MAIN_HAND_ONE]) pi.push(pe[equip_slots.MAIN_HAND_ONE]);
+        // equip the new item
+        pe[equip_slots.MAIN_HAND_ONE] = newItem;
+        // remove new item from inventory
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "HEAD":
+        if(pe[equip_slots.HEAD]) pi.push(pe[equip_slots.HEAD]);
+        pe[equip_slots.HEAD] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "TORSO":
+        if(pe[equip_slots.TORSO]) pi.push(pe[equip_slots.TORSO]);
+        pe[equip_slots.TORSO] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "LEGS":
+        if(pe[equip_slots.LEGS]) pi.push(pe[equip_slots.LEGS]);
+        pe[equip_slots.LEGS] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "BOOTS":
+        if(pe[equip_slots.BOOTS]) pi.push(pe[equip_slots.BOOTS]);
+        pe[equip_slots.BOOTS] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "SHOULDERS":
+        if(pe[equip_slots.SHOULDERS]) pi.push(pe[equip_slots.SHOULDERS]);
+        pe[equip_slots.SHOULDERS] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "NECK":
+        if(pe[equip_slots.NECK]) pi.push(pe[equip_slots.NECK]);
+        pe[equip_slots.NECK] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "BELT":
+        if(pe[equip_slots.BELT]) pi.push(pe[equip_slots.BELT]);
+        pe[equip_slots.BELT] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "GLOVES":
+        if(pe[equip_slots.GLOVES]) pi.push(pe[equip_slots.GLOVES]);
+        pe[equip_slots.GLOVES] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "ARTIFACT":
+        if(pe[equip_slots.ARTIFACT_ONE]) pi.push(pe[equip_slots.ARTIFACT_ONE]);
+        pe[equip_slots.ARTIFACT_ONE] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "RING":
+        if(pe[equip_slots.RING_ONE]) pi.push(pe[equip_slots.RING_ONE]);
+        pe[equip_slots.RING_ONE] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
       case "COOKWARE":
+        if(pe[equip_slots.COOKWARE]) pi.push(pe[equip_slots.COOKWARE]);
+        pe[equip_slots.COOKWARE] = newItem;
+        pi.splice(pi.indexOf(newItem), 1); break;
     }
 
     var newPlayer = Object.assign({}, this.state.player);
-    newPlayer.equipment = playerEquipment
+    newPlayer.equipment = pe;
+    newPlayer.inventory = pi;
     this.setState({ player : newPlayer });
   }
 
   //*************** REACT FUNCTIONS **************/
-  // Executes once on component load. Use for testing new code stuff
+  escFunction(event){
+    if(event.keyCode === 27) {
+      this.returnToDungeon();
+    }
+  }
+  componentWillUnmount(){
+    // Cleanup listeners. Game should not unmount, but this is best practice.
+    document.removeEventListener("keydown", this.escFunction, false);
+  }
   componentDidMount(){
+    // Add event listener for specified keypresses
+    document.addEventListener("keydown", this.escFunction, false);
+
     // Add n random items to player inventory
     var np = this.state.player;
     for(var i = 0; i < 18; i++){
@@ -316,15 +383,21 @@ class Game extends React.Component {
     const gameIntervalTickRate = 50;
     var count = 0;
     var gameInterval = setInterval(() => {
-      count += gameIntervalTickRate;
-      if(count >= 500){
-        this.modifyHealth(this.state.player.health_regen, false);
-        this.modifyMana(this.state.player.mana_regen, false);
-        count = 0;
-        // Every HP/MP update, save the game
-        // NOTE: This may need to be moved elsewhere later
-        this.saveGameStateToCookies();
+      var gs = this.state.gameState;
+      // If the game is running, run the clock.
+      if(gs == gamestates.DUNGEON || gs == gamestates.BATTLE ){
+        // Increment our count
+        count += gameIntervalTickRate;
+        // Every 500 MS, apply a regeneration tick and reset the count
+        if(count >= 500){
+          this.modifyHealth(this.state.player.health_regen, false);
+          this.modifyMana(this.state.player.mana_regen, false);
+          count = 0;
+        }
       }
+      // Even if the game's not running, save cookies.
+      this.saveGameStateToCookies();
+
     }, gameIntervalTickRate);
     this.setState({gameInterval: gameInterval});
   }
@@ -342,6 +415,7 @@ class Game extends React.Component {
       modifyHealth: this.modifyHealth.bind(this),
       attack: this.attack.bind(this),
       equipItem: this.equipItem.bind(this),
+      incrementEnemyAttack: this.incrementEnemyAttack.bind(this),
     }
     var statusFunctions = {
       inventoryScreen: this.menuScreen.bind(this, gamestates.INVENTORY),
@@ -359,13 +433,13 @@ class Game extends React.Component {
           <Status
             functions={statusFunctions}
             player={this.state.player}
-            statusCode={this.state.statusCode}
+            gameState={this.state.gameState}
           />
         </div>
         <div className="game-pane-center">
           <GameView
             functions={gameViewFunctions}
-            statusCode={this.state.statusCode}
+            gameState={this.state.gameState}
             statusMessage={this.state.statusMessage}
             player={this.state.player}
             enemy={this.state.enemy}
@@ -404,13 +478,13 @@ class Status extends React.Component {
           <h2> Mana </h2>
             <ManaBar player={this.props.player} />
           <br />
-          <button className={this.props.statusCode === gamestates.CHARACTER ? "panel panel-active" : "panel"}
+          <button className={this.props.gameState === gamestates.CHARACTER ? "panel panel-active" : "panel"}
                   onClick={this.props.functions.characterScreen}>Character Sheet</button>
-          <button className={this.props.statusCode === gamestates.INVENTORY ? "panel panel-active" : "panel"}
+          <button className={this.props.gameState === gamestates.INVENTORY ? "panel panel-active" : "panel"}
                   onClick={this.props.functions.inventoryScreen}>Inventory</button>
-          <button className={this.props.statusCode === gamestates.COOKBOOK ? "panel panel-active" : "panel"}
+          <button className={this.props.gameState === gamestates.COOKBOOK ? "panel panel-active" : "panel"}
                   onClick={this.props.functions.cookbookScreen}>Cookbook</button>
-          <button className={this.props.statusCode === gamestates.SPELLBOOK ? "panel panel-active" : "panel"}
+          <button className={this.props.gameState === gamestates.SPELLBOOK ? "panel panel-active" : "panel"}
                   onClick={this.props.functions.spellbookScreen}>Spellbook</button>
       </div>
     );
