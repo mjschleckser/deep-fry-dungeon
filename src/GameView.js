@@ -212,9 +212,12 @@ class BattleScreen extends React.Component {
     this.setState({battleInterval: battleInterval});
   };
 
-  // Terminate battle loop, clean up
+
   componentWillUnmount(){
+    // Terminate battle loop, clean up
     clearInterval(this.state.battleInterval);
+    // End shield block cooldown
+    this.props.functions.continueBlocking(999999);
   }
 
   render(){

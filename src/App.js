@@ -2,6 +2,7 @@
 import React from 'react';
 import GameView from './GameView';
 import ProgressBar from './Utilities';
+
 // Import classes & enums
 import { Monster, monsters, levels, recipes } from './Monsters';
 import { Item, generateItem, generateShield } from './Items';
@@ -504,9 +505,10 @@ class Game extends React.Component {
   } // End of render()
 } // End of Game class
 
-// Status
+
+////// Status //////
 // Renders all properties of the player - statistics, items, magic, etc.
-class Status extends React.Component {
+export class Status extends React.Component {
   render() {
     // const skills = Object.entries(this.props.player.skills).map(([key, obj]) => {
     //     return <h4 key={key}> {obj.display_name} : {obj.value} </h4>
@@ -559,6 +561,7 @@ class ManaBar extends React.Component {
     )
   }
 }
+
 
 class EquipmentDisplay extends React.Component {
   constructor (props){
