@@ -1,6 +1,7 @@
 import React from 'react';
 // import ProgressBar, { Tooltip } from './Utilities';
 import ProgressBar from './Utilities';
+import equip_slots from './App';
 import { ReactComponent as CloseIcon } from './svg/utility-close.svg';
 import './css/GameView.css';
 
@@ -143,7 +144,7 @@ class BattleScreen extends React.Component {
     var enemyCircumference = 40 * 2 * Math.PI;
     var playerCircumference = 40 * 2 * Math.PI;
     this.state = {
-      playerAttacking: true,
+      playerAttacking: false,
       playerCircleStyle: {
         transform: "rotate(-90deg)",
         transformOrigin: "50% 50%",
@@ -165,6 +166,11 @@ class BattleScreen extends React.Component {
     this.setState({playerAttacking : (!this.state.playerAttacking) })
   }
 
+  hasShieldEquipped(){
+    var p = this.props.player;
+    return (p.equipment[equip_slots.MAIN_HAND_TWO] && p.equipment[equip_slots.MAIN_HAND_TWO].item_type == "SHIELD");
+  }
+
   // Begin battle loop here
   componentDidMount(){
     const battleIntervalTickRate = 10;
@@ -183,9 +189,6 @@ class BattleScreen extends React.Component {
       // Handle player attack
       if(this.state.playerAttacking){
         var playerNum = this.props.functions.incrementPlayerAttack(battleIntervalTickRate);
-        if( playerNum % 250 == 0){
-          console.log(playerNum);
-        }
         // Adjust player attack circle
         circumference = 40 * 2 * Math.PI;
         offset = circumference + ((playerNum / maxPlayerNum) * circumference);
@@ -198,6 +201,11 @@ class BattleScreen extends React.Component {
         var playerCircleStyle = Object.assign({}, this.state.playerCircleStyle);
         playerCircleStyle.visibility = "hidden";
         this.setState( {playerCircleStyle: playerCircleStyle})
+      }
+
+      // Handle player blocking
+      if(this.props.player.block_cooldown >= 0 || this.props.player.block_duration >= 0){
+        this.props.functions.continueBlocking(battleIntervalTickRate);
       }
 
     }, battleIntervalTickRate);
@@ -246,7 +254,11 @@ class BattleScreen extends React.Component {
                     fill="transparent"/>
                 </svg>
               </td>
-              <td><button>Magic: Shield </button></td>
+              <td>
+                <button onClick={this.props.functions.shieldBlock} disabled={(this.props.player.block_cooldown > 0)}>Raise Shield </button>
+                <br/>
+                <span>{this.props.player.block_duration > 0 ? "Blocking for : "+this.props.player.block_duration : "" }</span>
+              </td>
             </tr>
           </tbody></table>
         </td></tr>

@@ -4,7 +4,7 @@ import GameView from './GameView';
 import ProgressBar from './Utilities';
 // Import classes & enums
 import { Monster, monsters, levels, recipes } from './Monsters';
-import { Item, generateItem } from './Items';
+import { Item, generateItem, generateShield } from './Items';
 import { spells } from './Magic';
 //Import CSS
 import './css/App.css';
@@ -71,7 +71,10 @@ var playerObj = {
   mana_reserved: 0,  // Amount of mana reserved for passive spells
   // mana + mana_reserved < mana_max (always)
 
+  // Timers & Intervals
   attack_progress: 0,
+  block_duration: 0,
+  block_cooldown: 0,
 
   // Skill cap is 60 for now
   skills: {
@@ -210,6 +213,7 @@ class Game extends React.Component {
   /************ COMBAT FUNCTIONS ************/
   incrementEnemyAttack( amount ){
     var e = this.state.enemy;
+    var p = this.state.player;
     // Increment attack timer, but don't attack while dead
     if(e.health > 0) e.attack_progress += amount;
     // Process attack if needed
@@ -217,6 +221,14 @@ class Game extends React.Component {
       e.attack_progress = 0;
       // Calculate damage from DPS and attack_interval
       var damage = e.dps * (e.attack_interval / 1000);
+      // Reduce damage if player is blocking
+      if(p.block_duration > 0){
+        // TODO: an audio cue here would be nice
+        console.log("Block successful!");
+        // TODO: use player's shield stats to reduce damage
+        damage = Math.round(damage / 2);
+      }
+
       this.modifyHealth(damage, true);
     }
     this.setState({enemy: e});
@@ -245,14 +257,34 @@ class Game extends React.Component {
         }, 350);
       }
     }
-
     this.setState({player: p, enemy: e});
-
     return p.attack_progress;
   }
 
+  shieldBlock(){
+    var p = this.state.player;
+    if(p.equipment[equip_slots.MAIN_HAND_TWO] && p.equipment[equip_slots.MAIN_HAND_TWO].item_type == "SHIELD"){
+      // Set player block duration
+      p.block_duration = 750;
+      // Start player block cooldown
+      p.block_cooldown = 1200;
+    } else {
+      console.error("No shield to block with!");
+    }
+  }
+
+  continueBlocking( duration ){
+    var p = this.state.player;
+    p.block_duration -= duration;
+    p.block_cooldown -= duration;
+    this.setState({player: p});
+    return p.block_cooldown;
+  }
+
+
 
   /************ PLAYER FUNCTIONS ************/
+  // Modifies the player's current health
   modifyHealth( amount, isDamage ){
     var np = this.state.player;
     np.health = (isDamage ? np.health - amount : np.health + amount)
@@ -302,11 +334,12 @@ class Game extends React.Component {
     var pi = this.state.player.inventory;
     switch(newItem.item_type){
       case "WEAPON":
-        // if item already equipped, unequip it before overwrite
         if(pe[equip_slots.MAIN_HAND_ONE]) pi.push(pe[equip_slots.MAIN_HAND_ONE]);
-        // equip the new item
         pe[equip_slots.MAIN_HAND_ONE] = newItem;
-        // remove new item from inventory
+        pi.splice(pi.indexOf(newItem), 1); break;
+      case "SHIELD":
+        if(pe[equip_slots.MAIN_HAND_TWO]) pi.push(pe[equip_slots.MAIN_HAND_TWO]);
+        pe[equip_slots.MAIN_HAND_TWO] = newItem;
         pi.splice(pi.indexOf(newItem), 1); break;
       case "HEAD":
         if(pe[equip_slots.HEAD]) pi.push(pe[equip_slots.HEAD]);
@@ -374,9 +407,13 @@ class Game extends React.Component {
     // Add event listener for specified keypresses
     document.addEventListener("keydown", this.escFunction, false);
 
-    // Add n random items to player inventory
+    ///// Player generation FUNCTIONS
     var np = this.state.player;
-    for(var i = 0; i < 18; i++){
+    // Generate & equip a shield, for blocking test
+    var newItem = generateShield();
+    np.equipment[equip_slots.MAIN_HAND_TWO] = newItem;
+    // Add n random items to player inventory
+    for(var i = 0; i < 9; i++){
       var newItem = generateItem();
       // TODO: Make this use an actual inventory function, check against max limit
       np.inventory.push(newItem);
@@ -420,8 +457,10 @@ class Game extends React.Component {
       explore: this.explore.bind(this),
       modifyHealth: this.modifyHealth.bind(this),
       incrementPlayerAttack: this.incrementPlayerAttack.bind(this),
-      equipItem: this.equipItem.bind(this),
       incrementEnemyAttack: this.incrementEnemyAttack.bind(this),
+      shieldBlock: this.shieldBlock.bind(this),
+      continueBlocking: this.continueBlocking.bind(this),
+      equipItem: this.equipItem.bind(this),
     }
     var statusFunctions = {
       inventoryScreen: this.menuScreen.bind(this, gamestates.INVENTORY),
