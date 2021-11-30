@@ -178,21 +178,33 @@
 /********** Styles for Character screen **********/
 .character { position: relative; }
 .character-skills {
-  display: flex;
-  flex-direction: column;
-  margin: 20px;
+  width: 100%;
 }
-.progressbar-outer {
-  border: 1px solid black;
-  position: relative;
-  height: 8vh;
+.skill-outer {
+  width: 100%;
 }
-.progressbar-inner {
-  background-color: #90ee90;
-  height: 100%;
+.skill-label {
+  background-color: #f44336;
+  padding-left: 1%;
+  height: 1.5em;
+  width: 10%;
 }
-.progressbar-text {
-  position: absolute;
-  top: calc(50% - .8em);
-  left: 15px;
+.skill-bar {
+  height: 100%; width: 75%;
+  padding: 3px;
+  margin: 3px;
+}
+.skill-bar > div {
+  display: inline-block;
+  vertical-align: top;
+  height: 1.5em;
+}
+
+.skill-button {
+  background-color: #04AA6D;
+  text-align: center;
+  height: 1.5em;
+  width: 7.5%;
+  cursor: pointer;
+  user-select: none;
 }

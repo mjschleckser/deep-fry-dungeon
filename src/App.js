@@ -63,6 +63,7 @@ var playerObj = {
   level: 1,
   class: "Rogue",
 
+  // Attributes
   health: 85,
   health_max: 100,
   health_regen: 1,  // HP regen per second
@@ -72,16 +73,27 @@ var playerObj = {
   mana_reserved: 0,  // Amount of mana reserved for passive spells
   // mana + mana_reserved < mana_max (always)
 
+  // Points to spend
+  attribute_points: 2,
+  skill_points: 10,
+
   // Timers & Intervals
   attack_progress: 0,
   block_duration: 0,
   block_cooldown: 0,
 
-  // Skill cap is 60 for now
+  // Skill cap is 20 for now
   skills: {
-    anatomy:    {name: "Anatomy", level: 1, xp: 50, xp_next: 400},
-    combat:     {name: "Combat", level: 1, xp: 250, xp_next: 400},
-    magic:      {name: "Magic", level: 3, xp: 100, xp_next: 1200},
+    // Magic skills
+    attackmagic:    {name: "Battlemagic", desc: "", level: 10},
+    defensemagic:   {name: "Warding", desc: "", level: 10},
+    othermagic:     {name: "Spellcraft", desc: "", level: 10},
+    // Combat skills
+    blocking:       {name: "Deflection", desc: "", level: 10},
+    precision:      {name: "Precision", desc: "", level: 10},
+    dodge:          {name: "Dodge", desc: "", level: 10},
+    // Other skills
+    cooking:        {name: "Cooking", desc: "", level: 10},
   },
   // Items can be either in equipment (worn) or in inventory, not both
   // Equipped items do not count towards inventory limit
@@ -418,7 +430,6 @@ class Game extends React.Component {
       var newItem = generateItem();
       // TODO: Make this use an actual inventory function, check against max limit
       np.inventory.push(newItem);
-      // console.log(newItem);
     }
     this.setState({player: np});
 
@@ -627,11 +638,12 @@ class EquipmentDisplay extends React.Component {
 
     return (
       <div className="equipment-display">
-        <h1 className="title"> Equipment </h1>
-        <br />
-        <table className="equipment-display-table"><tbody>
-          {createTable()}
-        </tbody></table>
+        <table className="equipment-display-table">
+          <tbody>
+            {createTable()}
+
+          </tbody>
+        </table>
       </div>
     );
   }

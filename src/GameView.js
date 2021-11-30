@@ -281,21 +281,58 @@ class BattleScreen extends React.Component {
 ///////////////////////////////////////////////////////////////////////////////
 
 class CharacterScreen extends React.Component {
+  constructor(props){
+    super(props);
+    // Make our own temporary skills to modify
+    this.state ={
+      tempSkills : Object.assign({}, this.props.player.skills),
+    }
+    // Bind functions
+    this.increaseSkill = this.increaseSkill.bind(this);
+    this.decreaseSkill = this.decreaseSkill.bind(this);
+    this.confirmChanges = this.confirmChanges.bind(this);
+  }
+
+  increaseSkill( e ){
+    var playerSkills = this.state.tempSkills;
+    playerSkills[e.currentTarget.id].level += 1;
+    this.setState({tempSkills: playerSkills});
+
+    // this.tempSkills;
+  }
+
+  decreaseSkill( e ){
+
+  }
+
+  confirmChanges(){
+    // Pass the changes back up to the game state
+  }
+
+  componentWillUnmount(){
+    this.setState({tempSkills: Object.assign({}, this.props.player.skills)});
+  }
+  componentDidMount(){
+    this.setState({tempSkills: Object.assign({}, this.props.player.skills)});
+  }
+
   render(){
     var createSkills = ()=>{
       var table=[];
-      var skillKeys = Object.keys(this.props.player.skills);
+      var skillKeys = Object.keys(this.state.tempSkills);
       for(let i=0; i < skillKeys.length; i++){
-        var skill = this.props.player.skills[skillKeys[i]];
-        var skill_name = skill.name;
-        var level = skill.level;
-        var percent = Math.floor((skill.xp / skill.xp_next)*100);
-        var innerBarStyle = { width: (percent)+"%", }
+        var skill = this.state.tempSkills[skillKeys[i]];
+
         table.push(
-          <div className="progressbar-outer">
-            <div className="progressbar-text"> {skill_name}: Level {level} ({percent}% to next level) </div>
-            <div className="progressbar-inner" style={innerBarStyle}></div>
-          </div>
+          <tr className="skill-outer" key={"skill_"+skill.name}>
+            <td className="skill-label">{skill.name}</td>
+            <td className="skill-bar">
+              <div style={ {backgroundColor: "#f44336", width : (skill.level/2)+"%" } }>{skill.level}</div>
+              <div style={ {backgroundColor: "#282c34", width : (100-(skill.level/2))+"%" } }>&nbsp;</div>
+            </td>
+            <td className="skill-button" id={skillKeys[i]} onClick={this.decreaseSkill}>-</td>
+            <td className="skill-button" id={skillKeys[i]} onClick={this.increaseSkill}>+</td>
+          </tr>
         );
       } // End for loop
       return table;
@@ -305,13 +342,18 @@ class CharacterScreen extends React.Component {
     return (
       <div className="character">
         <button className="icon-button" onClick={this.props.functions.returnToDungeon}><CloseIcon/></button>
-        <h2>Player Skills</h2>
-        <div className="character-skills">
-          {createSkills()}
+        <h2>Attributes</h2>
+        <div className="character-attributes">
+          <span></span>
+          <span></span>
         </div>
+        <h2>Skills</h2>
+        <table className="character-skills"><tbody>
+          {createSkills()}
+        </tbody></table>
         <h2>Monsters Slain</h2>
         <div className="character-stats"> PLACEHOLDER STATS
-          <div>Slimes: 16</div>
+          <div>Slimes: {this.props.player.skills.attackmagic.level}</div>
           <div>Kobolds: 0</div>
           <div>Behirs: 1</div>
         </div>
@@ -332,7 +374,6 @@ class InventoryScreen extends React.Component {
 
   }
   equipInventoryItem(e){
-    // console.log(e.currentTarget.id);
     var item = this.props.player.inventory[e.currentTarget.id];
     this.props.functions.equipItem(item);
   }
