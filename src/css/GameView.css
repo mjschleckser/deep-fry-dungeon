@@ -185,14 +185,16 @@
 }
 .skill-label {
   background-color: #f44336;
+  text-align: center;
   padding-left: 1%;
   height: 1.5em;
-  width: 10%;
+  width: 20%;
 }
 .skill-bar {
-  height: 100%; width: 75%;
   padding: 3px;
   margin: 3px;
+  height: 100%;
+  width: 65%;
 }
 .skill-bar > div {
   display: inline-block;

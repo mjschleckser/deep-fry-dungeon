@@ -285,36 +285,35 @@ class CharacterScreen extends React.Component {
     super(props);
     // Make our own temporary skills to modify
     this.state ={
-      tempSkills : Object.assign({}, this.props.player.skills),
+      // candidate for optimization, but effective deep copy
+      tempSkills : JSON.parse(JSON.stringify(this.props.player.skills)),
     }
     // Bind functions
-    this.increaseSkill = this.increaseSkill.bind(this);
-    this.decreaseSkill = this.decreaseSkill.bind(this);
+    this.modifySkill = this.modifySkill.bind(this);
     this.confirmChanges = this.confirmChanges.bind(this);
   }
 
-  increaseSkill( e ){
+  modifySkill( e ){
+    console.log(e);
     var playerSkills = this.state.tempSkills;
-    playerSkills[e.currentTarget.id].level += 1;
+
+    // Increase or decrease based on button clicked
+    if(e.currentTarget.innerText == "+"){
+      playerSkills[e.currentTarget.id].level += 1;
+    }
+    if(e.currentTarget.innerText == "-"){
+      playerSkills[e.currentTarget.id].level -= 1;
+    }
+
+    // Save the changes
     this.setState({tempSkills: playerSkills});
-
-    // this.tempSkills;
-  }
-
-  decreaseSkill( e ){
-
   }
 
   confirmChanges(){
-    // Pass the changes back up to the game state
+    this.props.functions.setPlayerSkills(this.state.tempSkills);
   }
 
-  componentWillUnmount(){
-    this.setState({tempSkills: Object.assign({}, this.props.player.skills)});
-  }
-  componentDidMount(){
-    this.setState({tempSkills: Object.assign({}, this.props.player.skills)});
-  }
+
 
   render(){
     var createSkills = ()=>{
@@ -330,8 +329,8 @@ class CharacterScreen extends React.Component {
               <div style={ {backgroundColor: "#f44336", width : (skill.level/2)+"%" } }>{skill.level}</div>
               <div style={ {backgroundColor: "#282c34", width : (100-(skill.level/2))+"%" } }>&nbsp;</div>
             </td>
-            <td className="skill-button" id={skillKeys[i]} onClick={this.decreaseSkill}>-</td>
-            <td className="skill-button" id={skillKeys[i]} onClick={this.increaseSkill}>+</td>
+            <td className="skill-button" id={skillKeys[i]} onClick={this.modifySkill}>-</td>
+            <td className="skill-button" id={skillKeys[i]} onClick={this.modifySkill}>+</td>
           </tr>
         );
       } // End for loop

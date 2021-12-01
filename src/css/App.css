@@ -87,11 +87,10 @@ body {
 /***************** Styles for equipped view *****************/
 .equipment-display {
   text-align: center;
+  width: 100%;
 }
 .equipment-display-table {
-  /* margin-top: 1vh; */
   width: 100%;
-  border: 1px solid black;
 }
 .equipment-display-table > tbody > tr {
   border: 1px solid black;
@@ -116,7 +115,6 @@ body {
   left: 0;
   right: 0;
 }
-
 
 /********** Styles for Empty Item Slots **********/
 .empty-item {

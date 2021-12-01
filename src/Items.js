@@ -1,5 +1,5 @@
 import React from 'react';
-import { equip_slots, rarities } from './App';
+import { equip_slots } from './App';
 import { Tooltip } from './Utilities';
 
 ////////// EQUIPMENT IMAGES BY CATEGORY
@@ -67,6 +67,16 @@ const item_types = {
   RING: [Ring01,],
   COOKWARE: [Pot01,],
 }
+const rarities = [
+  "common",
+  "uncommon",
+  "rare",
+  "epic",
+  "legendary",
+  "mythical",
+  "arcane"
+]
+
 
 // Generates an item completely randomly
 // Equal proportions for all equipment

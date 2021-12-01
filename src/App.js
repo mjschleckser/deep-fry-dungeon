@@ -48,15 +48,6 @@ export const equip_slots = {
   COOKWARE: 14,
 }
 
-export const rarities = [
-  "common",
-  "uncommon",
-  "rare",
-  "epic",
-  "legendary",
-  "mythical",
-  "arcane"
-]
 
 var playerObj = {
   name: "Rodney",
@@ -94,6 +85,7 @@ var playerObj = {
     dodge:          {name: "Dodge", desc: "", level: 10},
     // Other skills
     cooking:        {name: "Cooking", desc: "", level: 10},
+    cooking:        {name: "Stealth", desc: "", level: 10},
   },
   // Items can be either in equipment (worn) or in inventory, not both
   // Equipped items do not count towards inventory limit
@@ -328,6 +320,12 @@ class Game extends React.Component {
     this.setState({ player: np })
   }
 
+  setPlayerSkills( newSkills ){
+    var player = this.state.player;
+    player.skills =  JSON.parse(JSON.stringify(newSkills));
+    this.setState()
+  }
+
   removeReservedMana(){
     var np = this.state.player;
     np.mana_reserved -= 10;
@@ -400,7 +398,7 @@ class Game extends React.Component {
         pi.splice(pi.indexOf(newItem), 1); break;
     }
 
-    var newPlayer = Object.assign({}, this.state.player);
+    var newPlayer = this.state.player;
     newPlayer.equipment = pe;
     newPlayer.inventory = pi;
     this.setState({ player : newPlayer });
@@ -472,6 +470,7 @@ class Game extends React.Component {
       modifyHealth: this.modifyHealth.bind(this),
       incrementPlayerAttack: this.incrementPlayerAttack.bind(this),
       incrementEnemyAttack: this.incrementEnemyAttack.bind(this),
+      setPlayerSkills: this.setPlayerSkills.bind(this),
       shieldBlock: this.shieldBlock.bind(this),
       continueBlocking: this.continueBlocking.bind(this),
       equipItem: this.equipItem.bind(this),
@@ -637,14 +636,23 @@ class EquipmentDisplay extends React.Component {
     } // End arrow function
 
     return (
-      <div className="equipment-display">
-        <table className="equipment-display-table">
-          <tbody>
-            {createTable()}
-
-          </tbody>
-        </table>
-      </div>
+      <table className="equipment-display"> <tbody>
+        <tr>
+          <table className="equipment-display-table">
+            <tbody>
+              {createTable()}
+            </tbody>
+          </table>
+        </tr>
+        <tr>
+          <h2>Equipment Stats</h2>
+          <span>Attack interval: 1.5 seconds</span><br/>
+          <span>Shield block cooldown: .8 seconds</span><br/>
+          <span></span><br/>
+          <span></span><br/>
+          <span></span><br/>
+        </tr>
+      </tbody></table>
     );
   }
 }
