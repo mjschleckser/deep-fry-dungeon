@@ -24,7 +24,7 @@
 
 /* Styles for icon buttons e.g. "CLOSE" x */
 .icon-button {
-  background-image: url("../svg/utility-close.svg");
+  background-image: url("../../svg/utility-close.svg");
   background-color: red;
   height: 35px;
   width: 35px;

@@ -1,6 +1,6 @@
 // Import React & React classes
 import React from 'react';
-import GameView from './GameView';
+import GameView from './GameView/GameView';
 import ProgressBar from './Utilities';
 
 // Import classes & enums
