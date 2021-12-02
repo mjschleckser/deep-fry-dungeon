@@ -176,18 +176,40 @@
   padding: 10px;
 }
 /********** Styles for Character screen **********/
-.character { position: relative; }
-.character-skills {
-  width: 100%;
+.inline {
+  display: inline-block;
 }
-.skill-outer {
-  width: 100%;
+.character { position: relative; }
+.character-header {
+  margin: 0px 10px;
+  display: inline-block;
+}
+.character-skillbutton {
+  width: 12%;
+  float: right;
+}
+.attribute-label {
+  background-color: #3642f4;
+  text-align: center;
+  font-size: 1.5em;
+  margin: 3px;
+  width: 30%;
+}
+.attribute-health {
+  background-color: #ff0000;
+  text-align: center;
+  font-size: 1.25em;
+  width: 40%;
+}
+.attribute-mana {
+  background-color: #0000ff;
+  text-align: center;
+  font-size: 1.25em;
+  width: 40%;
 }
 .skill-label {
   background-color: #f44336;
   text-align: center;
-  padding-left: 1%;
-  height: 1.5em;
   width: 20%;
 }
 .skill-bar {
@@ -201,12 +223,13 @@
   vertical-align: top;
   height: 1.5em;
 }
+.skill-outer {
 
+}
 .skill-button {
   background-color: #04AA6D;
   text-align: center;
-  height: 1.5em;
-  width: 7.5%;
-  cursor: pointer;
-  user-select: none;
+  font-size: 1.3em;
+  height: 100%;
+  width: 3em;
 }

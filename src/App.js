@@ -323,7 +323,21 @@ class Game extends React.Component {
   setPlayerSkills( newSkills ){
     var player = this.state.player;
     player.skills =  JSON.parse(JSON.stringify(newSkills));
-    this.setState()
+    this.setState({player: player});
+  }
+
+  setPlayerAttributes( healthPoints, manaPoints ){
+    var player = this.state.player;
+    player.health_max = healthPoints;
+    player.mana_max = manaPoints;
+    this.setState({player: player});
+  }
+
+  setPlayerPoints( skillPoints, attrPoints ){
+    var player = this.state.player;
+    player.skill_points = skillPoints;
+    player.attribute_points = attrPoints;
+    this.setState({player: player});
   }
 
   removeReservedMana(){
@@ -471,6 +485,8 @@ class Game extends React.Component {
       incrementPlayerAttack: this.incrementPlayerAttack.bind(this),
       incrementEnemyAttack: this.incrementEnemyAttack.bind(this),
       setPlayerSkills: this.setPlayerSkills.bind(this),
+      setPlayerAttributes: this.setPlayerAttributes.bind(this),
+      setPlayerPoints: this.setPlayerPoints.bind(this),
       shieldBlock: this.shieldBlock.bind(this),
       continueBlocking: this.continueBlocking.bind(this),
       equipItem: this.equipItem.bind(this),
