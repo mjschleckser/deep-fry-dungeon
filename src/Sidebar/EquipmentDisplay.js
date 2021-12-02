@@ -15,6 +15,8 @@ import { ReactComponent as EmptyNeck } from '../svg/equipment-empty/necklace.svg
 import { ReactComponent as EmptyShoulder } from '../svg/equipment-empty/shoulder.svg';
 import { ReactComponent as EmptyCookware } from '../svg/equipment-empty/cauldron.svg';
 
+import './css/EquipmentDisplay.css';
+
 
 export default class EquipmentDisplay extends React.Component {
   constructor (props){
@@ -80,23 +82,21 @@ export default class EquipmentDisplay extends React.Component {
     } // End arrow function
 
     return (
-      <table className="equipment-display"> <tbody>
-        <tr>
-          <table className="equipment-display-table">
-            <tbody>
-              {createTable()}
-            </tbody>
-          </table>
-        </tr>
-        <tr>
+      <div>
+        <table className="equipment-display-table">
+          <tbody>
+            {createTable()}
+          </tbody>
+        </table>
+        <div className="equipment-display">
           <h2>Equipment Stats</h2>
-          <span>Attack interval: 1.5 seconds</span><br/>
-          <span>Shield block cooldown: .8 seconds</span><br/>
-          <span></span><br/>
-          <span></span><br/>
-          <span></span><br/>
-        </tr>
-      </tbody></table>
+          <span>Attack interval: 1.5 seconds</span> <br/>
+          <span>Shield block cooldown: .8 seconds</span> <br/>
+          <span></span> <br/>
+          <span></span> <br/>
+          <span></span> <br/>
+        </div>
+      </div>
     );
   }
 }

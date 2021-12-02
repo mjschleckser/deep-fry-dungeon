@@ -132,6 +132,8 @@ export default class CharacterScreen extends React.Component {
 
     // Check if we've made any changes
     var changesMade = false;
+    if(this.state.healthpoints != this.props.player.health_max) changesMade = true;
+    if(this.state.manapoints != this.props.player.mana_max) changesMade = true;
     for (const newItem in this.state.tempSkills) {
       for(const oldItem in this.props.player.skills){
         if(this.state.tempSkills[newItem].name == this.props.player.skills[oldItem].name){
@@ -141,6 +143,7 @@ export default class CharacterScreen extends React.Component {
         }
       }
     }
+
 
     // TODO: Populate stats page with real data for monsters slain
     return (
