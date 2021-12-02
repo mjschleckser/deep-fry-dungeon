@@ -1,7 +1,8 @@
 // Import React & React classes
 import React from 'react';
 import GameView from './GameView/GameView';
-import ProgressBar from './Utilities';
+import EquipmentDisplay from './Sidebar/EquipmentDisplay';
+import PlayerStatus from './Sidebar/PlayerStatus';
 
 // Import classes & enums
 import { Monster, monsters, levels, recipes } from './Monsters';
@@ -10,10 +11,7 @@ import { spells } from './Magic';
 //Import CSS
 import './css/App.css';
 // Import SVG images
-import {
-  EmptyBelt, EmptyTorso, EmptyHand, EmptyBoots, EmptyArtifact, EmptyRing,
-  EmptyHead, EmptyNeck, EmptyShoulder, EmptyCookware, EmptyLegs, EmptyGloves
-} from './SVG';
+
 
 export default App;
 export const gamestates = {
@@ -504,7 +502,7 @@ class Game extends React.Component {
     return (
       <div className="game-container">
         <div className="game-pane-left">
-          <Status
+          <PlayerStatus
             functions={statusFunctions}
             player={this.state.player}
             gameState={this.state.gameState}
@@ -530,145 +528,3 @@ class Game extends React.Component {
     );
   } // End of render()
 } // End of Game class
-
-
-////// Status //////
-// Renders all properties of the player - statistics, items, magic, etc.
-export class Status extends React.Component {
-  render() {
-    // const skills = Object.entries(this.props.player.skills).map(([key, obj]) => {
-    //     return <h4 key={key}> {obj.display_name} : {obj.value} </h4>
-    // })
-
-    // var roundedHP = Math.round(this.props.player.health);
-    var roundedHP = (this.props.player.health);
-
-    return (
-      <div className="menu-status">
-          <h1 className="title"> {this.props.player.name} </h1>
-          <div className="subtitle">Level {this.props.player.level} {this.props.player.class}</div>
-          <br />
-          <h2> Health </h2>
-            <ProgressBar progress={roundedHP} progressMax={this.props.player.health_max} color="red" bgColor="white" />
-          <h2> Mana </h2>
-            <ManaBar player={this.props.player} />
-          <br />
-          <button className={this.props.gameState === gamestates.CHARACTER ? "panel panel-active" : "panel"}
-                  onClick={this.props.functions.characterScreen}>Character Sheet</button>
-          <button className={this.props.gameState === gamestates.INVENTORY ? "panel panel-active" : "panel"}
-                  onClick={this.props.functions.inventoryScreen}>Inventory</button>
-          <button className={this.props.gameState === gamestates.COOKBOOK ? "panel panel-active" : "panel"}
-                  onClick={this.props.functions.cookbookScreen}>Cookbook</button>
-          <button className={this.props.gameState === gamestates.SPELLBOOK ? "panel panel-active" : "panel"}
-                  onClick={this.props.functions.spellbookScreen}>Spellbook</button>
-      </div>
-    );
-  }
-}
-
-// Renders the player's mana bar
-class ManaBar extends React.Component {
-  render(){
-    var innerBarStyle = {
-      width: (this.props.player.mana / this.props.player.mana_max)* 100+"%",
-    }
-    var reservedStyle = {
-      width: (this.props.player.mana_reserved / this.props.player.mana_max)* 100+"%",
-    }
-    // TODO: Code the color of the text to always contrast both other colors
-
-    var reservedMana = this.props.player.mana_reserved;
-    return (
-      <div className="mana-bar-outer">
-        <div className="mana-bar-inner" style={innerBarStyle}></div>
-        <span className="mana-bar-reserved" style={reservedStyle}> {reservedMana > 0 ? reservedMana : ""} &nbsp;</span>
-        <span className="mana-bar-text"> &nbsp; {this.props.player.mana} / {this.props.player.mana_max} </span>
-      </div>
-    )
-  }
-}
-
-
-class EquipmentDisplay extends React.Component {
-  constructor (props){
-    super(props);
-  }
-  // TODO: properly implement this function
-  // Fetches the item equipped in the given slot
-  getEmpty(slot){
-    var svg = <div></div>
-    switch(slot){
-      case equip_slots.ARTIFACT_ONE: case equip_slots.ARTIFACT_TWO:
-        svg = <EmptyArtifact className="empty-item item-small"/>; break;
-      case equip_slots.RING_ONE: case equip_slots.RING_TWO:
-        svg = <EmptyRing className="empty-item item-small"/>; break;
-      case equip_slots.MAIN_HAND_ONE: case equip_slots.MAIN_HAND_TWO:
-        svg = <EmptyHand className="empty-item item-small"/>; break;
-      case equip_slots.HEAD:
-        svg = <EmptyHead className="empty-item"/>; break;
-      case equip_slots.NECK:
-        svg = <EmptyNeck className="empty-item"/>; break;
-      case equip_slots.SHOULDERS:
-        svg = <EmptyShoulder className="empty-item"/>; break;
-      case equip_slots.TORSO:
-        svg = <EmptyTorso className="empty-item"/>; break;
-      case equip_slots.BELT:
-        svg = <EmptyBelt className="empty-item"/>; break;
-      case equip_slots.LEGS:
-        svg = <EmptyLegs className="empty-item"/>; break;
-      case equip_slots.BOOTS:
-        svg = <EmptyBoots className="empty-item item-small"/>; break;
-      case equip_slots.GLOVES:
-        svg = <EmptyGloves className="empty-item"/>; break;
-      case equip_slots.COOKWARE:
-        svg = <EmptyCookware className="empty-item"/>; break;
-      }
-    return svg;
-  }
-  getEquipped(equipSlot){
-    if(this.props.equipment[equipSlot] == null){
-      return this.getEmpty(equipSlot);
-    } else {
-      return this.props.equipment[equipSlot].getImage();
-    }
-  }
-  render() {
-    var createTable = ()=>{
-      var equipSlotsArray = Object.keys(equip_slots);
-      let table=[];
-      for(var i=0; i < equipSlotsArray.length; i+=3){
-        var i1 = this.getEquipped(equip_slots[equipSlotsArray[i]])
-        var i2 = this.getEquipped(equip_slots[equipSlotsArray[i+1]])
-        var i3 = this.getEquipped(equip_slots[equipSlotsArray[i+2]])
-        table.push(
-          <tr key={i}>
-            <td>{i1}</td>
-            <td>{i2}</td>
-            <td>{i3}</td>
-          </tr>
-        );
-      } // End for loop
-      return table;
-    } // End arrow function
-
-    return (
-      <table className="equipment-display"> <tbody>
-        <tr>
-          <table className="equipment-display-table">
-            <tbody>
-              {createTable()}
-            </tbody>
-          </table>
-        </tr>
-        <tr>
-          <h2>Equipment Stats</h2>
-          <span>Attack interval: 1.5 seconds</span><br/>
-          <span>Shield block cooldown: .8 seconds</span><br/>
-          <span></span><br/>
-          <span></span><br/>
-          <span></span><br/>
-        </tr>
-      </tbody></table>
-    );
-  }
-}

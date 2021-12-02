@@ -2,8 +2,26 @@
 ////////////////////////////// Dungeon Screen /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 import React from 'react';
-import ActionBar from './GameView';
 import ProgressBar from '../Utilities';
+
+//////////////////////////// Action Bar //////////////////////////////////
+class DungeonActionBar extends React.Component {
+  render() {
+    var actions;
+
+    if(this.props.actions != null){
+      actions = Object.entries(this.props.actions).map(([key, obj]) => {
+          return <button key={key} onClick={obj.action}> {obj.text} </button>
+      })
+    }
+    return (
+      <div className="menu-actionbar">
+        {actions}
+      </div>
+    );
+  }
+}
+
 
 export default class DungeonScreen extends React.Component {
   render(){
@@ -23,7 +41,7 @@ export default class DungeonScreen extends React.Component {
       <div className="view-dungeon">
         <h3>Dungeon - Level 1</h3>
         {renderMessage()}
-        <ActionBar
+        <DungeonActionBar
           actions={actions}
         />
       </div>

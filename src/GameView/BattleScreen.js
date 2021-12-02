@@ -16,9 +16,23 @@ function capitalizeEachWord(string){
   return result;
 }
 
-//////////////////////////////////////////////////////////////////////////
 //////////////////////////// Action Bar //////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
+class BattleActionBar extends React.Component {
+  render() {
+    var actions;
+
+    if(this.props.actions != null){
+      actions = Object.entries(this.props.actions).map(([key, obj]) => {
+          return <button key={key} onClick={obj.action}> {obj.text} </button>
+      })
+    }
+    return (
+      <div className="menu-actionbar">
+        {actions}
+      </div>
+    );
+  }
+}
 
 
 export default class BattleScreen extends React.Component {
@@ -53,7 +67,7 @@ export default class BattleScreen extends React.Component {
 
   hasShieldEquipped(){
     var p = this.props.player;
-    return (p.equipment[equip_slots.MAIN_HAND_TWO] && p.equipment[equip_slots.MAIN_HAND_TWO].item_type == "SHIELD");
+    return (p.equipment[equip_slots.MAIN_HAND_TWO] && p.equipment[equip_slots.MAIN_HAND_TWO].item_type === "SHIELD");
   }
 
   // Begin battle loop here
@@ -142,7 +156,7 @@ export default class BattleScreen extends React.Component {
                     fill="transparent"/>
                 </svg>
               </td>
-              <td>
+              <td style={ {backgroundImage: "../svg/equipment/equip-shield.svg"} }>
                 <button onClick={this.props.functions.shieldBlock} disabled={(this.props.player.block_cooldown > 0)}>Raise Shield </button>
                 <br/>
                 <span>{this.props.player.block_duration > 0 ? "Blocking for : "+this.props.player.block_duration : "" }</span>
@@ -151,7 +165,7 @@ export default class BattleScreen extends React.Component {
           </tbody></table>
         </td></tr>
         <tr><td>
-          <ActionBar
+          <BattleActionBar
             actions={actions}
           />
         </td></tr>

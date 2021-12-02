@@ -2,7 +2,7 @@
 ///////////////////////////// Inventory Screen ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 import React from 'react';
-import CloseIcon from './GameView';
+import { ReactComponent as CloseIcon } from '../svg/utility-close.svg';
 
 export default class InventoryScreen extends React.Component {
   constructor (props){

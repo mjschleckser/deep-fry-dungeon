@@ -2,7 +2,7 @@
 ///////////////////////////// Spellbook Screen ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 import React from 'react';
-import CloseIcon from './GameView';
+import { ReactComponent as CloseIcon } from '../svg/utility-close.svg';
 
 export default class SpellbookScreen extends React.Component {
   render(){

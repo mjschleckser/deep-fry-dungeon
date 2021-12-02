@@ -8,15 +8,12 @@ import DungeonScreen from './DungeonScreen';
 import BattleScreen from './BattleScreen';
 import CharacterScreen from './CharacterScreen';
 
-export { ReactComponent as CloseIcon } from '../svg/utility-close.svg';
-
 
 // GameWindow
 // This window renders the actual game view - monsters, rooms, etc
 export default class GameView extends React.Component {
   render() {
     var currentGameView;
-    var actions;
     switch(this.props.gameState){
       case 0: // gamestates.DUNGEON
         currentGameView = <DungeonScreen
@@ -69,29 +66,5 @@ export default class GameView extends React.Component {
       </div>
     );
 
-  }
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////// Action Bar //////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-
-export class ActionBar extends React.Component {
-  render() {
-    // TODO: comment this, uncomment next line
-    var actions = <button> Sample Text </button>
-    // var actions;
-
-    if(this.props.actions != null){
-      actions = Object.entries(this.props.actions).map(([key, obj]) => {
-          return <button key={key} onClick={obj.action}> {obj.text} </button>
-      })
-    }
-    return (
-      <div className="menu-actionbar">
-        {actions}
-      </div>
-    );
   }
 }

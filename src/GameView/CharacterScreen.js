@@ -2,7 +2,7 @@
 ///////////////////////////// Character Screen ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 import React from 'react';
-import CloseIcon from './GameView';
+import { ReactComponent as CloseIcon } from '../svg/utility-close.svg';
 
 export default class CharacterScreen extends React.Component {
   constructor(props){
@@ -50,21 +50,21 @@ export default class CharacterScreen extends React.Component {
 
     switch(e.currentTarget.innerText) {
       case '+':
-          if((e.currentTarget.id == 'hp') && (attribute_points > 0)) {
+          if((e.currentTarget.id === 'hp') && (attribute_points > 0)) {
             healthpoints += 10;
             attribute_points--;
           }
-          if((e.currentTarget.id == 'mana') && (attribute_points > 0)) {
+          if((e.currentTarget.id === 'mana') && (attribute_points > 0)) {
             manapoints += 10;
             attribute_points--;
           }
         break;
       case '-':
-        if((e.currentTarget.id == 'hp') && (this.state.healthpoints > player.health_max)) {
+        if((e.currentTarget.id === 'hp') && (this.state.healthpoints > player.health_max)) {
           healthpoints -= 10;
           attribute_points++;
         }
-        if((e.currentTarget.id == 'mana') && (this.state.manapoints > player.mana_max)) {
+        if((e.currentTarget.id === 'mana') && (this.state.manapoints > player.mana_max)) {
           manapoints -= 10;
           attribute_points++;
         }
