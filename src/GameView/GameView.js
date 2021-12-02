@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './css/GameView.css';
+import '../css/GameView.css';
 import CookbookScreen from './CookbookScreen';
 import SpellbookScreen from './SpellbookScreen';
 import InventoryScreen from './InventoryScreen';

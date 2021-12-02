@@ -15,7 +15,7 @@ import { ReactComponent as EmptyNeck } from '../svg/equipment-empty/necklace.svg
 import { ReactComponent as EmptyShoulder } from '../svg/equipment-empty/shoulder.svg';
 import { ReactComponent as EmptyCookware } from '../svg/equipment-empty/cauldron.svg';
 
-import './css/EquipmentDisplay.css';
+import '../css/EquipmentDisplay.css';
 
 
 export default class EquipmentDisplay extends React.Component {
