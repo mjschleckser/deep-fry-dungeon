@@ -122,7 +122,8 @@ body {
   filter: invert(31%) sepia(0%) saturate(1424%) hue-rotate(142deg) brightness(96%) contrast(89%);
   height: calc(100% - 10px);
   width:  calc(100% - 10px);
-  opacity: 25%; border: 5px solid transparent;
+  opacity: 50%; 
+  border: 5px solid transparent;
 }
 
 /********** Styles for Items **********/
