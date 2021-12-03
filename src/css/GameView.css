@@ -74,33 +74,6 @@
   margin: 20px;
 }
 
-/********** Styles for Battle screen **********/
-.view-battle {
-  text-align: center;
-  position: relative;
-  height: 100%;
-}
-.view-battle-text {
-  /* font-family: "Luminari", fantasy, serif; */
-  vertical-align: middle;
-  height: 6%;
-  font-family: "Consolas", monospace;
-}
-.view-battle-enemycontainer {
-  background-color: #999;
-  /* margin: 50px; */
-  height: 40%;
-  border: 1px solid black;
-}
-
-.view-battle-enemy {
-  position: relative;
-}
-.attack-circle-wrapper {
-  position: absolute;
-  top: calc(50% - 50px); left: calc(50% - 50px);
-}
-
 /**********************************************/
 /********** Beginning of Menu styles **********/
 /**********************************************/

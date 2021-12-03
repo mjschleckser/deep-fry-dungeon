@@ -64,7 +64,6 @@ export default class EquipmentDisplay extends React.Component {
   render() {
     var createTable = ()=>{
       var equipSlotsArray = Object.keys(equip_slots);
-      console.log(equip_slots);
       let table=[];
       for(var i=0; i < equipSlotsArray.length; i+=3){
         var i1 = this.getEquipped(equip_slots[equipSlotsArray[i]])

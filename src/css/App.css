@@ -121,7 +121,7 @@ body {
   /* #727272 */
   height: calc(100% - 10px);
   width:  calc(100% - 10px);
-  opacity: 0.25;
+  opacity: 0.2;
   border: 5px solid transparent;
 }
 
