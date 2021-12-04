@@ -56,7 +56,7 @@ var playerObj = {
   health: 85,
   health_max: 100,
   health_regen: 1,  // HP regen per second
-  mana: 50,
+  mana: 0,
   mana_max: 100,
   mana_regen: 5,  // MP regen per second
   mana_reserved: 0,  // Amount of mana reserved for passive spells
@@ -88,10 +88,13 @@ var playerObj = {
   // Items can be either in equipment (worn) or in inventory, not both
   // Equipped items do not count towards inventory limit
   inventory: [],
-  equipment: {},
   inventory_slots: 28,
+
+  equipment: {},
+
   spellbook: [spells.fireball, spells.magicmissile, spells.shield],
-  active_spells: [spells.shield],
+  spell_cooldown: 500,
+  spell_cooldown_active: 0,
   cookbook: [recipes.slime_pudding, recipes.spider_stew],
 }
 
@@ -127,7 +130,6 @@ class Game extends React.Component {
       gameState: gamestates.DUNGEON,  // Governs which window we're displaying
       statusMessage: "", // Message to display to the player
       player: playerObj,
-      enemy: null,
       ground_items: [],
     }
     // Bind functions
@@ -232,7 +234,7 @@ class Game extends React.Component {
         damage = Math.round(damage / 2);
       }
 
-      this.modifyHealth(damage, true);
+      this.modifyPlayerHealth(damage, true);
     }
     this.setState({enemy: e});
     return e.attack_progress;
@@ -248,17 +250,7 @@ class Game extends React.Component {
     if(p.attack_progress >= 1500){ // TODO: use an actual attack interval
       // Trigger the attack
       p.attack_progress = 0;
-      e.health -= damage;
-      if(e.health <= 0){  // check for enemy death
-        e.health=0;
-        this.setState({enemy: e});
-        setTimeout(()=>{
-          // After animation plays, remove enemy and change stage
-          // TODO: Randomly generate a message, instead of always using this one
-          this.dungeonState("You vanquish the "+e.name+"!");
-          e = null;
-        }, 350);
-      }
+      this.modifyEnemyHealth(damage, true);
     }
     this.setState({player: p, enemy: e});
     return p.attack_progress;
@@ -284,38 +276,54 @@ class Game extends React.Component {
     return p.block_cooldown;
   }
 
+  /************ COMBAT - ENEMY FUNCTIONS ************/
+  modifyEnemyHealth( amount, isDamage ){
+    var e = this.state.enemy;
+    e.health = (isDamage ? e.health - amount : e.health + amount)
+    if(e.health <= 0){  // check for enemy death
+      e.health=0;
+      this.setState({enemy: e});
+      setTimeout(()=>{
+        // After animation plays, remove enemy and change stage
+        this.dungeonState("You vanquish the "+e.name+"!");
+        e = null;
+      }, 350);
+    }
+    if(e.health >= e.health_max){
+      e.health = e.health_max;
+    }
+    this.setState({ enemy: e })
+  }
+
 
 
   /************ PLAYER FUNCTIONS ************/
   // Modifies the player's current health
-  modifyHealth( amount, isDamage ){
+  modifyPlayerHealth( amount, isDamage ){
     var np = this.state.player;
     np.health = (isDamage ? np.health - amount : np.health + amount)
-
     if(np.health <= 0){
       // TODO: State transition to death
       np.health = 0;
       // alert("You died!");
     }
-
     if(np.health >= np.health_max){
       np.health = np.health_max;
     }
     this.setState({ player: np })
   }
 
-  modifyMana( amount, isDamage ){
+  modifyPlayerMana( amount, isDamage ){
     var np = this.state.player;
-    np.mana = (isDamage ? np.mana - amount : np.mana + amount)
-
+    np.mana = (isDamage ? np.mana - amount : np.mana + amount);
     if(np.mana <= 0){
-      // TODO: Spell fails, return "False"
+      np.mana = 0;
     }
-
     if(np.mana >= (np.mana_max - np.mana_reserved)){
       np.mana = np.mana_max - np.mana_reserved;
     }
-    this.setState({ player: np })
+    this.setState({ player: np });
+    return true;
   }
 
   setPlayerSkills( newSkills ){
@@ -457,8 +465,8 @@ class Game extends React.Component {
         if(count >= 500 || (count >= 200 && gs == gamestates.DUNGEON)){
           var hp_regen = this.state.player.health_regen;
           var mp_regen = this.state.player.mana_regen;
-          this.modifyHealth(hp_regen, false);
-          this.modifyMana(mp_regen, false);
+          this.modifyPlayerHealth(hp_regen, false);
+          this.modifyPlayerMana(mp_regen, false);
           count = 0;
         }
       }
@@ -479,7 +487,9 @@ class Game extends React.Component {
       battleState: this.battleState.bind(this),
       forceGameState: this.forceGameState.bind(this),
       explore: this.explore.bind(this),
-      modifyHealth: this.modifyHealth.bind(this),
+      modifyPlayerHealth: this.modifyPlayerHealth.bind(this),
+      modifyPlayerMana: this.modifyPlayerMana.bind(this),
+      modifyEnemyHealth: this.modifyEnemyHealth.bind(this),
       incrementPlayerAttack: this.incrementPlayerAttack.bind(this),
       incrementEnemyAttack: this.incrementEnemyAttack.bind(this),
       setPlayerSkills: this.setPlayerSkills.bind(this),

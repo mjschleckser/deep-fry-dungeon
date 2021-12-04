@@ -16,7 +16,11 @@
 .size-bigbutton {
   height: 80px;
   width: 120px;
-  z-index: 100;
+}
+.size-medbutton {
+  height: 40px;
+  margin: 5px;
+  width: 120px;
 }
 
 .size-100 {

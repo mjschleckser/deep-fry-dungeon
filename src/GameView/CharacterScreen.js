@@ -113,8 +113,8 @@ export default class CharacterScreen extends React.Component {
       var skillKeys = Object.keys(this.state.tempSkills);
       for(let i=0; i < skillKeys.length; i++){
         var skill = this.state.tempSkills[skillKeys[i]];
-        var canIncrease = true;
-        var canDecrease = true;
+        var canIncrease = this.state.skill_points > 0;
+        var canDecrease = skill.level > this.props.player.skills[skillKeys[i]].level
         table.push(
           <tr className="skill-outer" key={"skill_"+skill.name}>
             <td className="skill-label">{skill.name}</td>
@@ -157,14 +157,18 @@ export default class CharacterScreen extends React.Component {
           <div className="">
             <div className="attribute-label inline">Health</div>
             <div className="attribute-health inline"> {this.state.healthpoints} </div>
-            <button className="skill-button inline" id={"hp"} onClick={this.modifyAttribute}>-</button>
-            <button className="skill-button inline" id={"hp"} onClick={this.modifyAttribute}>+</button>
+            <button className="skill-button inline" id={"hp"} onClick={this.modifyAttribute}
+              disabled={this.state.healthpoints <= this.props.player.health_max}>-</button>
+            <button className="skill-button inline" id={"hp"} onClick={this.modifyAttribute}
+              disabled={this.state.attribute_points <= 0}>+</button>
           </div>
           <div className="">
             <div className="attribute-label inline">Mana</div>
             <div className="attribute-mana inline"> {this.state.manapoints} </div>
-            <button className="skill-button inline" id={"mana"} onClick={this.modifyAttribute}>-</button>
-            <button className="skill-button inline" id={"mana"} onClick={this.modifyAttribute}>+</button>
+            <button className="skill-button inline" id={"mana"} onClick={this.modifyAttribute}
+              disabled={this.state.manapoints <= this.props.player.mana_max}>-</button>
+            <button className="skill-button inline" id={"mana"} onClick={this.modifyAttribute}
+              disabled={this.state.attribute_points <= 0}>+</button>
           </div>
         </div>
 

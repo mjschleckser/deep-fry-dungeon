@@ -4,7 +4,8 @@
 import React from 'react';
 import ActionBar from './GameView';
 import ProgressBar from '../Utilities';
-import {equip_slots} from '../App';
+import { equip_slots } from '../App';
+import { spells, damage_types, buffs, debuffs} from '../Magic';
 
 import {default as shieldBlock} from "../svg/equipment-empty/shield.svg";
 import {default as swordAttack} from "../svg/equipment-empty/sword.svg";
@@ -51,6 +52,7 @@ export default class BattleScreen extends React.Component {
       playerAttacking: false,
     }
     // Bind functions
+    this.castSpell = this.castSpell.bind(this);
     this.handleAttack = this.handleAttack.bind(this);
     this.battleInterval = this.battleInterval.bind(this);
     this.callShieldBlock = this.callShieldBlock.bind(this);
@@ -94,6 +96,27 @@ export default class BattleScreen extends React.Component {
     // Handle player blocking
     if(this.props.player.block_cooldown >= 0 || this.props.player.block_duration >= 0){
       this.props.functions.continueBlocking(battleIntervalTickRate);
+    }
+
+    // Decrement & apply buffs and debuffs
+  }
+
+  castSpell( e ){
+    var spellNum = parseInt(e.target.id.replace("spell_num_", ""));
+    var spell = this.props.player.spellbook[spellNum];
+    //// BEGIN SPELL CASTING PROCESS
+    // First, check to make sure we have sufficient mana
+    if(this.props.player.mana >= spell.mana_cost){
+      // Subtratct the mana cost
+      this.props.functions.modifyPlayerMana(spell.mana_cost, true);
+      // Apply direct damage
+      var randDamage = Math.random() * spell.damage_variation * 2;
+      var damage = Math.round(spell.damage - spell.damage_variation + randDamage);
+      this.props.functions.modifyEnemyHealth(spell.damage, true);
+      // Apply debuffs
+    } else {
+      // TODO: Probably just disable any spell button without enough mana
+      console.error("Not enough mana!");
     }
   }
 
@@ -140,6 +163,23 @@ export default class BattleScreen extends React.Component {
       animationDuration: "200ms",
     }
 
+    var createSpells = ()=>{
+      var table=[];
+      var spellbook = this.props.player.spellbook;
+      for(let i=0; i < spellbook.length; i++){
+        table.push(
+          <div>
+            <button className="size-medbutton" id={"spell_num_"+i}
+            disabled={(this.props.player.spell_cooldown_active > 0) || (this.props.player.mana < spellbook[i].mana_cost)}
+            onClick={this.castSpell} >
+              {spellbook[i].name}
+            </button>
+          </div>
+        );
+      } // End for loop
+      return table;
+    } // End createSpells
+
     return (
       <table className="view-battle"><tbody>
         <tr><td className="view-battle-text">The {this.props.enemy.name} jumps out from the shadows!</td></tr>
@@ -156,7 +196,7 @@ export default class BattleScreen extends React.Component {
         <tr><td>
           <table className="view-battle-playeractions" style={{width:"100%", height:"100%", tableLayout:"fixed"}}><tbody>
             <tr>
-              <td><button>Magic: Fireball</button></td>
+              <td>{createSpells()}</td>
               <td>
                 { this.state.playerAttacking ? <img src={swordAttack} className="center-absolute size-100" style={shieldStyle} /> : '\u00A0'}
                 <button
