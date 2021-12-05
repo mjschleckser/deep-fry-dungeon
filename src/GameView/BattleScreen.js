@@ -44,61 +44,92 @@ class BattleActionBar extends React.Component {
 export default class BattleScreen extends React.Component {
   constructor(props){
     super(props);
-    // Calculate starting offset of enemy attack circle
-    // 40 = current circle radius
-    var enemyCircumference = 40 * 2 * Math.PI;
-    var playerCircumference = 40 * 2 * Math.PI;
+
     this.state = {
+      enemy: this.props.enemy,
+      enemyHasAttacked: false,
+      enemyAttackProgress: 0,
       playerAttacking: false,
+      playerAttackProgress: 0,
+      playerAttackInterval: 1000,
+      playerBlockDuration: 0,
+      playerBlockCooldown: 0,
     }
     // Bind functions
     this.castSpell = this.castSpell.bind(this);
+    this.shieldBlock = this.shieldBlock.bind(this);
+    this.continueBlocking = this.continueBlocking.bind(this);
     this.handleAttack = this.handleAttack.bind(this);
     this.battleInterval = this.battleInterval.bind(this);
-    this.callShieldBlock = this.callShieldBlock.bind(this);
-    this.animateEnemyLunge = this.animateEnemyLunge.bind(this);
-    this.hasShieldEquipped = this.hasShieldEquipped.bind(this);
+    this.modifyEnemyHealth = this.modifyEnemyHealth.bind(this);
+    this.incrementEnemyAttack = this.incrementEnemyAttack.bind(this);
+    this.incrementPlayerAttack = this.incrementPlayerAttack.bind(this);
+    this.playerHasShieldEquipped = this.playerHasShieldEquipped.bind(this);
+
   }
 
   handleAttack(){
     this.setState({playerAttacking : (!this.state.playerAttacking) })
   }
 
-  hasShieldEquipped(){
+  playerHasShieldEquipped(){
     var p = this.props.player;
     return Boolean(p.equipment[equip_slots.MAIN_HAND_TWO] && (p.equipment[equip_slots.MAIN_HAND_TWO].item_type === "SHIELD"));
   }
 
-  callShieldBlock(){
-    this.props.functions.shieldBlock();
+
+
+  /************ COMBAT - ENEMY FUNCTIONS ************/
+  incrementEnemyAttack( amount ){
+    var p = this.props.player;
+    var e = this.state.enemy;
+    var eap = this.state.enemyAttackProgress;
+    // Increment attack timer, but don't attack while dead
+    if(e.health > 0) eap += amount;
+    // Trigger attack if we reach threshold
+    if(eap >= e.attack_interval){
+      var damage = e.dps * (e.attack_interval / 1000);  // Calculate damage from DPS and attack_interval
+      if(this.state.playerBlockDuration > 0){ // Reduce damage if player is blocking
+        // TODO: add visual cue to block
+        // TODO: use player's shield stats and active buffs to reduce damage
+        damage = Math.round(damage / 2);
+      }
+      this.props.functions.modifyPlayerHealth(damage, true);
+      this.setState({enemyHasAttacked: true});
+      eap = 0;
+    }
+    this.setState({enemy: e, enemyAttackProgress: eap});
+    return eap;
   }
 
-  animateEnemyLunge(){
-
+  modifyEnemyHealth( amount, isDamage ){
+    var e = this.state.enemy;
+    e.health = (isDamage ? e.health - amount : e.health + amount)
+    if(e.health <= 0){ // check for enemy death
+      e.health = 0;
+      setTimeout(()=>{ // After animation plays, remove enemy and change stage
+        this.props.functions.dungeonState("You vanquish the "+e.name+"!");
+      }, 350);
+    } else if(e.health >= e.health_max){
+      e.health = e.health_max;
+    }
+    this.setState({ enemy: e })
   }
 
-  // Handle events that occur every [N] seconds in a battle
-  battleInterval(battleIntervalTickRate){
-    var maxEnemyNum = this.props.enemy.attack_interval;
-    var maxPlayerNum = 1500; // this.props.player.attack_interval;
 
-    // Increment enemy's attack progress by our tickrate
-    var enemyNum = this.props.functions.incrementEnemyAttack(battleIntervalTickRate);
-    if(enemyNum = 0){
-      this.animateEnemyLunge();
+
+  /************ COMBAT - PLAYER FUNCTIONS ************/
+  incrementPlayerAttack( amount ){
+    var rand = Math.floor((Math.random() * 100) + 1); // 1-100
+    var damage = 10;
+    var pap = this.state.playerAttackProgress + amount;
+    if(pap >= this.state.playerAttackInterval){ // TODO: use an actual attack interval
+      // Trigger the attack
+      pap = 0;
+      this.modifyEnemyHealth(damage, true);
     }
-
-    // Handle player attack
-    if(this.state.playerAttacking){
-      var playerNum = this.props.functions.incrementPlayerAttack(battleIntervalTickRate);
-    }
-
-    // Handle player blocking
-    if(this.props.player.block_cooldown >= 0 || this.props.player.block_duration >= 0){
-      this.props.functions.continueBlocking(battleIntervalTickRate);
-    }
-
-    // Decrement & apply buffs and debuffs
+    this.setState({playerAttackProgress: pap});
+    return pap;
   }
 
   castSpell( e ){
@@ -120,6 +151,47 @@ export default class BattleScreen extends React.Component {
     }
   }
 
+  shieldBlock(){
+    var p = this.props.player;
+    var blockDuration = 750;
+    var blockCooldown = 1200;
+    if(this.playerHasShieldEquipped()){
+      this.setState({
+        playerBlockDuration: blockDuration,
+        playerBlockCooldown: blockCooldown,
+      });
+    } else {
+      console.error("No shield to block with!");
+    }
+  }
+
+  continueBlocking( duration ){
+    var blockDuration = this.state.playerBlockDuration - duration;
+    var blockCooldown = this.state.playerBlockCooldown - duration;
+    this.setState({
+      playerBlockDuration: blockDuration,
+      playerBlockCooldown: blockCooldown,
+    });
+  }
+
+
+
+  ////////////////// BATTLE INTERVAL - MAIN BATTLE LOOP //////////////////
+  // Handle events that occur every [N] seconds in a battle
+  battleInterval(battleIntervalTickRate){
+    // Increment enemy's attack progress by our tickrate
+    this.incrementEnemyAttack(battleIntervalTickRate);
+    // Handle player attack
+    if(this.state.playerAttacking){
+      this.incrementPlayerAttack(battleIntervalTickRate);
+    }
+    // Handle player blocking
+    if(this.state.playerBlockCooldown > 0 || this.state.playerBlockDuration > 0){
+      this.continueBlocking(battleIntervalTickRate);
+    }
+    // TODO: Decrement & apply buffs and debuffs
+  }
+
   // Begin battle loop here
   componentDidMount(){
     const battleIntervalTickRate = 10;
@@ -129,46 +201,49 @@ export default class BattleScreen extends React.Component {
     this.setState({battleInterval: battleInterval});
   };
 
-
   componentWillUnmount(){
     //// CLEAN UP ALL BATTLE COMPONENTS
-    // Terminate battle loop
-    clearInterval(this.state.battleInterval);
-    // End shield block cooldown
-    this.props.functions.continueBlocking(999999);
+    clearInterval(this.state.battleInterval); // Terminate battle loop
   }
 
   render(){
+    /*********************** Action bar ***********************/
     var actions = [
       // {text: "Attack", action: this.props.functions.attack},
       {text: "Run Away", action: () => {this.props.functions.dungeonState("You flee from the "+this.props.enemy.name+".")}},
     ]
 
+    /*********************** Button Text ***********************/
     var shieldText;
-    if(this.props.player.block_duration > 0){
-      shieldText = "BLOCKING "+this.props.player.block_duration;
-    } else if (this.props.player.block_cooldown > 0){
-      shieldText = "BLOCK COOLDOWN "+this.props.player.block_cooldown;
+    if(this.state.playerBlockDuration > 0){
+      shieldText = "BLOCKING "+this.state.playerBlockDuration;
+    } else if (this.state.playerBlockCooldown > 0){
+      shieldText = "BLOCK COOLDOWN "+this.state.playerBlockCooldown;
     } else {
       shieldText = "Shield Block";
     }
 
-    var enemyAttackStyle = {
+    /*********************** CSS Styles ***********************/
+    var attackStyle = {
+      animationName: "blocking",
+      animationDuration: Math.round(this.state.playerAttackInterval / 2)+"ms",
+    }
+    var blockStyle = {
+      animationName: "blocking",
+      animationDuration: "200ms",
+    }
+    var lungeStyle = {
       animationName: "lunging",
       animationDuration: Math.round(this.props.enemy.attack_interval / 2)+"ms",
     }
 
-    var shieldStyle = {
-      animationName: "blocking",
-      animationDuration: "200ms",
-    }
-
+    /*********************** List Creation ***********************/
     var createSpells = ()=>{
       var table=[];
       var spellbook = this.props.player.spellbook;
       for(let i=0; i < spellbook.length; i++){
         table.push(
-          <div>
+          <div key={"spell_num_"+i}>
             <button className="size-medbutton" id={"spell_num_"+i}
             disabled={(this.props.player.spell_cooldown_active > 0) || (this.props.player.mana < spellbook[i].mana_cost)}
             onClick={this.castSpell} >
@@ -186,7 +261,8 @@ export default class BattleScreen extends React.Component {
         <tr><td className="view-battle-enemycontainer">
           <h2 className="view-battle-enemylabel">{capitalizeEachWord(this.props.enemy.name)}</h2>
 
-          <div className="view-battle-enemy" style={(this.props.enemy.attack_progress <= this.props.enemy.attack_interval/2) ? enemyAttackStyle : {}}>
+          <div className="view-battle-enemy"
+            style={((this.state.enemyAttackProgress <= this.state.enemy.attack_interval/2) && this.state.enemyHasAttacked) ? lungeStyle : {}}>
             {this.props.enemy.getImage()}
           </div>
           <div className="view-battle-enemyhp">
@@ -198,7 +274,12 @@ export default class BattleScreen extends React.Component {
             <tr>
               <td>{createSpells()}</td>
               <td>
-                { this.state.playerAttacking ? <img src={swordAttack} className="center-absolute size-100" style={shieldStyle} /> : '\u00A0'}
+                {
+                  this.state.playerAttacking ?
+                    <img src={swordAttack} className="center-absolute size-100"
+                      style={(this.state.playerAttackProgress <= this.state.playerAttackInterval/2) ? attackStyle : {}} />
+                    : '\u00A0'
+                }
                 <button
                   className="center-absolute size-bigbutton"
                   onClick={this.handleAttack}>
@@ -206,10 +287,10 @@ export default class BattleScreen extends React.Component {
                 </button>
               </td>
               <td>
-                { this.props.player.block_duration > 0 ? <img src={shieldBlock} className="center-absolute size-100" style={shieldStyle} /> : '\u00A0'}
+                { this.state.playerBlockDuration > 0 ? <img src={shieldBlock} className="center-absolute size-100" style={blockStyle} /> : '\u00A0'}
                 <button
-                  onClick={this.callShieldBlock}
-                  disabled={(this.props.player.block_cooldown > 0) || (!this.hasShieldEquipped())}
+                  onClick={this.shieldBlock}
+                  disabled={(this.props.player.block_cooldown > 0) || (!this.playerHasShieldEquipped())}
                   className="center-absolute size-bigbutton">
                   {shieldText}
                 </button>
