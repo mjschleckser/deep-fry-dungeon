@@ -30,7 +30,6 @@ export class Monster {
     this.image = monsterConst.image;
     this.dps = monsterConst.damage;
     this.attack_interval = monsterConst.attack_interval;
-    this.attack_progress = 0;
     this.loot = this.getLoot(monsterConst.level);
   }
 }
@@ -51,28 +50,28 @@ export const monsters = {
   //// Tier 1 Monsters ////
   gremlin: {
     name: "gremlin",
-    health_max: 20,
+    health_max: 200,
     damage: 8,
     attack_interval: 750,
     image: <Gremlin className="monster"/>,
   },
   imp: {
     name: "imp",
-    health_max: 15,
+    health_max: 150,
     damage: 10,
     attack_interval: 1000,
     image: <Imp className="monster"/>,
   },
   ogre: {
     name: "ogre",
-    health_max: 45,
+    health_max: 450,
     damage: 20,
     attack_interval: 2500,
     image: <Ogre className="monster"/>,
   },
   zombie: {
     name: "zombie",
-    health_max: 30,
+    health_max: 300,
     damage: 10,
     attack_interval: 2200,
     image: <Zombie className="monster"/>,

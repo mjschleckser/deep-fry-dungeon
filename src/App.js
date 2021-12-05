@@ -66,11 +66,6 @@ var playerObj = {
   attribute_points: 2,
   skill_points: 10,
 
-  // Timers & Intervals
-  attack_progress: 0,
-  block_duration: 0,
-  block_cooldown: 0,
-
   // Skill cap is 20 for now
   skills: {
     // Magic skills
@@ -93,8 +88,6 @@ var playerObj = {
   equipment: {},
 
   spellbook: [spells.fireball, spells.magicmissile, spells.shield],
-  spell_cooldown: 500,
-  spell_cooldown_active: 0,
   cookbook: [recipes.slime_pudding, recipes.spider_stew],
 }
 
@@ -215,88 +208,6 @@ class Game extends React.Component {
     console.error("Error in random encounter generation!");
   }
 
-  /************ COMBAT FUNCTIONS ************/
-  incrementEnemyAttack( amount ){
-    var e = this.state.enemy;
-    var p = this.state.player;
-    // Increment attack timer, but don't attack while dead
-    if(e.health > 0) e.attack_progress += amount;
-    // Process attack if needed
-    if(e.attack_progress >= e.attack_interval){
-      e.attack_progress = 0;
-      // Calculate damage from DPS and attack_interval
-      var damage = e.dps * (e.attack_interval / 1000);
-      // Reduce damage if player is blocking
-      if(p.block_duration > 0){
-        // TODO: an audio cue here would be nice
-        console.log("Block successful!");
-        // TODO: use player's shield stats to reduce damage
-        damage = Math.round(damage / 2);
-      }
-
-      this.modifyPlayerHealth(damage, true);
-    }
-    this.setState({enemy: e});
-    return e.attack_progress;
-  }
-
-  incrementPlayerAttack( amount ){
-    var rand = Math.floor((Math.random() * 100) + 1); // 1-100
-    var damage = 5;
-    var p = this.state.player;
-    var e = this.state.enemy;
-
-    p.attack_progress += amount;
-    if(p.attack_progress >= 1500){ // TODO: use an actual attack interval
-      // Trigger the attack
-      p.attack_progress = 0;
-      this.modifyEnemyHealth(damage, true);
-    }
-    this.setState({player: p, enemy: e});
-    return p.attack_progress;
-  }
-
-  shieldBlock(){
-    var p = this.state.player;
-    if(p.equipment[equip_slots.MAIN_HAND_TWO] && p.equipment[equip_slots.MAIN_HAND_TWO].item_type == "SHIELD"){
-      // Set player block duration
-      p.block_duration = 750;
-      // Start player block cooldown
-      p.block_cooldown = 1200;
-    } else {
-      console.error("No shield to block with!");
-    }
-  }
-
-  continueBlocking( duration ){
-    var p = this.state.player;
-    p.block_duration -= duration;
-    p.block_cooldown -= duration;
-    this.setState({player: p});
-    return p.block_cooldown;
-  }
-
-  /************ COMBAT - ENEMY FUNCTIONS ************/
-  modifyEnemyHealth( amount, isDamage ){
-    var e = this.state.enemy;
-    e.health = (isDamage ? e.health - amount : e.health + amount)
-    if(e.health <= 0){  // check for enemy death
-      e.health=0;
-      this.setState({enemy: e});
-      setTimeout(()=>{
-        // After animation plays, remove enemy and change stage
-        this.dungeonState("You vanquish the "+e.name+"!");
-        e = null;
-      }, 350);
-    }
-    if(e.health >= e.health_max){
-      e.health = e.health_max;
-    }
-    this.setState({ enemy: e })
-  }
-
-
-
   /************ PLAYER FUNCTIONS ************/
   // Modifies the player's current health
   modifyPlayerHealth( amount, isDamage ){
@@ -346,16 +257,12 @@ class Game extends React.Component {
     this.setState({player: player});
   }
 
-  removeReservedMana(){
-    var np = this.state.player;
-    np.mana_reserved -= 10;
-    this.setState({ player: np })
-  }
 
   unequipItem( item ){
     // To make this easier, just pass in the slot that it's equipped to
 
   }
+
   equipItem( newItem ){
     if(newItem instanceof Item !== true){
       console.error("Invalid item passed to equipItem!")
@@ -489,14 +396,9 @@ class Game extends React.Component {
       explore: this.explore.bind(this),
       modifyPlayerHealth: this.modifyPlayerHealth.bind(this),
       modifyPlayerMana: this.modifyPlayerMana.bind(this),
-      modifyEnemyHealth: this.modifyEnemyHealth.bind(this),
-      incrementPlayerAttack: this.incrementPlayerAttack.bind(this),
-      incrementEnemyAttack: this.incrementEnemyAttack.bind(this),
       setPlayerSkills: this.setPlayerSkills.bind(this),
       setPlayerAttributes: this.setPlayerAttributes.bind(this),
       setPlayerPoints: this.setPlayerPoints.bind(this),
-      shieldBlock: this.shieldBlock.bind(this),
-      continueBlocking: this.continueBlocking.bind(this),
       equipItem: this.equipItem.bind(this),
     }
     var statusFunctions = {
